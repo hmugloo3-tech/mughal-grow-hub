@@ -189,7 +189,7 @@ export default function AIChatWidget() {
             exit={{ scale: 0, rotate: 180 }}
             transition={{ type: "spring", stiffness: 260, damping: 20 }}
             onClick={() => setOpen(true)}
-            className="fixed bottom-28 lg:bottom-24 right-4 lg:right-6 z-40 group"
+            className="fixed bottom-36 lg:bottom-20 right-4 lg:right-6 z-40 group"
             aria-label="Open AI Chat"
           >
             <div className="relative">
