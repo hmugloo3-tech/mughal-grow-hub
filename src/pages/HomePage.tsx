@@ -101,7 +101,16 @@ export default function HomePage() {
       .eq("is_active", true)
       .order("created_at", { ascending: false })
       .limit(8)
-      .then(({ data }) => setFeaturedProducts(data || []));
+      .then(({ data }) => {
+        const products = data || [];
+        setFeaturedProducts(products);
+        // Preload product images for instant rendering
+        products.forEach((p) => {
+          const src = p.image_url || categoryImages[p.category] || productPesticide;
+          const img = new Image();
+          img.src = src;
+        });
+      });
   }, []);
 
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
