@@ -171,7 +171,42 @@ export default function HomePage() {
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Featured Products</h2>
             <p className="text-muted-foreground">Top-selling products trusted by farmers across Kashmir.</p>
           </motion.div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Mobile: Swipeable Carousel */}
+          <div className="lg:hidden">
+            <Carousel opts={{ align: "start", loop: true }} className="w-full">
+              <CarouselContent className="-ml-3">
+                {featuredProducts.map((product) => (
+                  <CarouselItem key={product.id} className="pl-3 basis-[75%] sm:basis-1/2">
+                    <article className="glass-card-hover rounded-xl overflow-hidden group h-full">
+                      <Link to={`/products/${product.id}`} className="block">
+                        <div className="aspect-square overflow-hidden bg-muted">
+                          <img src={product.image_url || categoryImages[product.category] || productPesticide} alt={product.name} className="w-full h-full object-cover" loading="lazy" width={400} height={400} />
+                        </div>
+                      </Link>
+                      <div className="p-4">
+                        <span className="text-xs font-medium text-primary bg-accent rounded-full px-2.5 py-0.5">{categories.find(c => c.id === product.category)?.name}</span>
+                        <h3 className="font-semibold text-foreground mt-2 mb-1 text-sm line-clamp-1">{product.name}</h3>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-lg font-bold text-primary">₹{product.price}</span>
+                          <span className={`text-xs ${product.stock > 0 ? "text-leaf" : "text-destructive"}`}>
+                            {product.stock > 0 ? "In Stock" : "Out"}
+                          </span>
+                        </div>
+                        <Button size="sm" onClick={() => { addItem({ id: product.id, name: product.name, price: product.price, category: product.category, image_url: product.image_url || categoryImages[product.category], stock: product.stock }); toast({ title: `${product.name} added!` }); }}
+                          disabled={product.stock <= 0} className="w-full bg-primary text-primary-foreground gap-1.5 h-9 text-xs">
+                          <ShoppingCart className="h-3.5 w-3.5" /> Add to Cart
+                        </Button>
+                      </div>
+                    </article>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
+            <p className="text-center text-xs text-muted-foreground mt-3">← Swipe to see more →</p>
+          </div>
+
+          {/* Desktop: Grid */}
+          <div className="hidden lg:grid grid-cols-4 gap-6">
             {featuredProducts.map((product, i) => (
               <motion.div key={product.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
                 <article className="glass-card-hover rounded-xl overflow-hidden group">
@@ -190,14 +225,8 @@ export default function HomePage() {
                         {product.stock > 0 ? "In Stock" : "Out of Stock"}
                       </span>
                     </div>
-                    <Button
-                      onClick={() => {
-                        addItem({ id: product.id, name: product.name, price: product.price, category: product.category, image_url: product.image_url || categoryImages[product.category], stock: product.stock });
-                        toast({ title: `${product.name} added to cart!` });
-                      }}
-                      disabled={product.stock <= 0}
-                      className="w-full mt-4 bg-primary text-primary-foreground hover:bg-primary/90 gap-2"
-                    >
+                    <Button onClick={() => { addItem({ id: product.id, name: product.name, price: product.price, category: product.category, image_url: product.image_url || categoryImages[product.category], stock: product.stock }); toast({ title: `${product.name} added to cart!` }); }}
+                      disabled={product.stock <= 0} className="w-full mt-4 bg-primary text-primary-foreground hover:bg-primary/90 gap-2">
                       <ShoppingCart className="h-4 w-4" /> Add to Cart
                     </Button>
                   </div>
