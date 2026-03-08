@@ -2,14 +2,17 @@ import { useState, useEffect } from "react";
 import { Navigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
+import { useWishlist } from "@/hooks/useWishlist";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import {
-  Package, MapPin, RefreshCw, LogOut, Clock, CheckCircle, Truck, ShoppingBag, Plus, Trash2, User
+  Package, MapPin, RefreshCw, LogOut, Clock, CheckCircle, Truck, ShoppingBag, Plus, Trash2, User,
+  Heart, ShoppingCart, ChevronDown, ChevronUp, XCircle
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
-type Tab = "orders" | "addresses" | "profile";
+type Tab = "orders" | "addresses" | "profile" | "wishlist";
 
 interface Order {
   id: string;
@@ -31,13 +34,14 @@ interface Address {
   district: string; state: string; pincode: string; is_default: boolean;
 }
 
-const statusIcons: Record<string, typeof Clock> = {
-  pending: Clock, confirmed: CheckCircle, shipped: Truck, delivered: CheckCircle, cancelled: Package,
-};
+const ORDER_STEPS = ["pending", "confirmed", "shipped", "delivered"];
 
-const statusColors: Record<string, string> = {
-  pending: "text-secondary", confirmed: "text-primary", shipped: "text-leaf",
-  delivered: "text-primary", cancelled: "text-destructive",
+const statusMeta: Record<string, { icon: typeof Clock; color: string; label: string }> = {
+  pending: { icon: Clock, color: "text-secondary", label: "Order Placed" },
+  confirmed: { icon: CheckCircle, color: "text-primary", label: "Confirmed" },
+  shipped: { icon: Truck, color: "text-leaf", label: "Shipped" },
+  delivered: { icon: CheckCircle, color: "text-primary", label: "Delivered" },
+  cancelled: { icon: XCircle, color: "text-destructive", label: "Cancelled" },
 };
 
 export default function CustomerDashboard() {
@@ -65,9 +69,10 @@ export default function CustomerDashboard() {
       </section>
 
       <div className="container-custom py-6">
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-2 mb-6 flex-wrap">
           {([
             { id: "orders" as Tab, label: "My Orders", icon: Package },
+            { id: "wishlist" as Tab, label: "Wishlist", icon: Heart },
             { id: "addresses" as Tab, label: "Addresses", icon: MapPin },
             { id: "profile" as Tab, label: "Profile", icon: User },
           ]).map((t) => (
@@ -79,8 +84,62 @@ export default function CustomerDashboard() {
         </div>
 
         {tab === "orders" && <OrdersTab userId={user.id} />}
+        {tab === "wishlist" && <WishlistTab />}
         {tab === "addresses" && <AddressesTab userId={user.id} />}
         {tab === "profile" && <ProfileTab userId={user.id} email={user.email || ""} />}
+      </div>
+    </div>
+  );
+}
+
+/* ─── ORDER TRACKING TIMELINE ─── */
+function OrderTimeline({ status }: { status: string }) {
+  if (status === "cancelled") {
+    return (
+      <div className="flex items-center gap-2 mt-3 p-3 bg-destructive/10 rounded-lg">
+        <XCircle className="h-5 w-5 text-destructive" />
+        <span className="text-sm font-semibold text-destructive">Order Cancelled</span>
+      </div>
+    );
+  }
+
+  const currentIdx = ORDER_STEPS.indexOf(status);
+
+  return (
+    <div className="mt-4">
+      <div className="flex items-center justify-between relative">
+        {/* Progress line */}
+        <div className="absolute top-4 left-0 right-0 h-0.5 bg-border" />
+        <div
+          className="absolute top-4 left-0 h-0.5 bg-primary transition-all duration-500"
+          style={{ width: `${Math.max(0, (currentIdx / (ORDER_STEPS.length - 1)) * 100)}%` }}
+        />
+
+        {ORDER_STEPS.map((step, i) => {
+          const meta = statusMeta[step];
+          const Icon = meta.icon;
+          const isCompleted = i <= currentIdx;
+          const isCurrent = i === currentIdx;
+
+          return (
+            <div key={step} className="relative flex flex-col items-center z-10">
+              <motion.div
+                initial={false}
+                animate={{ scale: isCurrent ? 1.15 : 1 }}
+                className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors ${
+                  isCompleted
+                    ? "bg-primary border-primary"
+                    : "bg-background border-border"
+                }`}
+              >
+                <Icon className={`h-4 w-4 ${isCompleted ? "text-primary-foreground" : "text-muted-foreground"}`} />
+              </motion.div>
+              <span className={`text-[10px] mt-1.5 font-medium ${isCompleted ? "text-primary" : "text-muted-foreground"}`}>
+                {meta.label}
+              </span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -89,6 +148,7 @@ export default function CustomerDashboard() {
 function OrdersTab({ userId }: { userId: string }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const { addItem } = useCart();
   const { toast } = useToast();
 
@@ -118,75 +178,160 @@ function OrdersTab({ userId }: { userId: string }) {
       ) : (
         <div className="space-y-4">
           {orders.map((order) => {
-            const StatusIcon = statusIcons[order.status] || Clock;
             const items = order.product_list as any[];
             const addr = order.delivery_address_snapshot as any;
+            const isExpanded = expandedId === order.id;
+            const meta = statusMeta[order.status] || statusMeta.pending;
+
             return (
-              <div key={order.id} className="glass-card rounded-xl p-5">
-                <div className="flex flex-wrap justify-between items-start gap-3 mb-3">
-                  <div>
-                    <p className="text-xs text-muted-foreground font-mono">Order #{order.id.slice(0, 8).toUpperCase()}</p>
-                    <p className="text-xs text-muted-foreground">{new Date(order.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</p>
+              <motion.div key={order.id} layout className="glass-card rounded-xl overflow-hidden">
+                {/* Header - always visible */}
+                <button
+                  onClick={() => setExpandedId(isExpanded ? null : order.id)}
+                  className="w-full p-5 text-left"
+                >
+                  <div className="flex flex-wrap justify-between items-start gap-3">
+                    <div>
+                      <p className="text-xs text-muted-foreground font-mono">Order #{order.id.slice(0, 8).toUpperCase()}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(order.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                      </p>
+                      <p className="text-lg font-bold text-primary mt-1">₹{order.total_price}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5">
+                        <meta.icon className={`h-4 w-4 ${meta.color}`} />
+                        <span className={`text-sm font-semibold capitalize ${meta.color}`}>{order.status}</span>
+                      </div>
+                      {isExpanded ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <StatusIcon className={`h-4 w-4 ${statusColors[order.status]}`} />
-                    <span className={`text-sm font-semibold capitalize ${statusColors[order.status]}`}>{order.status}</span>
-                  </div>
-                </div>
 
-                <div className="border-t border-border pt-3 space-y-1.5">
-                  {items.map((item: any, i: number) => (
-                    <div key={i} className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">{item.name} × {item.quantity}</span>
-                      <span className="text-foreground">₹{item.price * item.quantity}</span>
-                    </div>
-                  ))}
-                  {order.delivery_charges > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Delivery</span>
-                      <span className="text-foreground">₹{order.delivery_charges}</span>
-                    </div>
+                  {/* Timeline */}
+                  <OrderTimeline status={order.status} />
+                </button>
+
+                {/* Expanded details */}
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-5 pb-5 border-t border-border pt-4">
+                        <div className="space-y-1.5">
+                          {items.map((item: any, i: number) => (
+                            <div key={i} className="flex justify-between text-sm">
+                              <span className="text-muted-foreground">{item.name} × {item.quantity}</span>
+                              <span className="text-foreground">₹{item.price * item.quantity}</span>
+                            </div>
+                          ))}
+                          {order.delivery_charges > 0 && (
+                            <div className="flex justify-between text-sm">
+                              <span className="text-muted-foreground">Delivery</span>
+                              <span className="text-foreground">₹{order.delivery_charges}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {addr && (
+                          <div className="mt-3 text-xs text-muted-foreground">
+                            <span className="font-medium">Delivery:</span> {addr.address_line1}, {addr.village || ""} {addr.district} - {addr.pincode}
+                          </div>
+                        )}
+
+                        {order.estimated_delivery && (
+                          <div className="mt-1 text-xs text-muted-foreground">
+                            <span className="font-medium">Est. Delivery:</span> {new Date(order.estimated_delivery).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                          </div>
+                        )}
+
+                        {order.tracking_notes && order.tracking_notes.length > 0 && (
+                          <div className="mt-3 bg-accent rounded-lg p-3">
+                            <p className="text-xs font-semibold text-foreground mb-1">Tracking Updates</p>
+                            {order.tracking_notes.map((note, i) => (
+                              <p key={i} className="text-xs text-muted-foreground">• {note}</p>
+                            ))}
+                          </div>
+                        )}
+
+                        <div className="flex gap-2 mt-4">
+                          <Button size="sm" variant="outline" onClick={() => reorder(order)}
+                            className="gap-1 border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+                            <RefreshCw className="h-3 w-3" /> Reorder
+                          </Button>
+                          <span className="text-xs self-center text-muted-foreground capitalize">
+                            Payment: {order.payment_method === "cod" ? "Cash on Delivery" : order.payment_method} ({order.payment_status})
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
                   )}
-                  <div className="flex justify-between text-sm font-bold border-t border-border pt-2">
-                    <span>Total</span><span className="text-primary">₹{order.total_price}</span>
-                  </div>
-                </div>
-
-                {addr && (
-                  <div className="mt-3 text-xs text-muted-foreground">
-                    <span className="font-medium">Delivery:</span> {addr.address_line1}, {addr.village || ""} {addr.district} - {addr.pincode}
-                  </div>
-                )}
-
-                {order.estimated_delivery && (
-                  <div className="mt-1 text-xs text-muted-foreground">
-                    <span className="font-medium">Est. Delivery:</span> {new Date(order.estimated_delivery).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
-                  </div>
-                )}
-
-                {order.tracking_notes && order.tracking_notes.length > 0 && (
-                  <div className="mt-3 bg-accent rounded-lg p-3">
-                    <p className="text-xs font-semibold text-foreground mb-1">Tracking Updates</p>
-                    {order.tracking_notes.map((note, i) => (
-                      <p key={i} className="text-xs text-muted-foreground">• {note}</p>
-                    ))}
-                  </div>
-                )}
-
-                <div className="flex gap-2 mt-4">
-                  <Button size="sm" variant="outline" onClick={() => reorder(order)}
-                    className="gap-1 border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                    <RefreshCw className="h-3 w-3" /> Reorder
-                  </Button>
-                  <span className="text-xs self-center text-muted-foreground capitalize">
-                    Payment: {order.payment_method === "cod" ? "Cash on Delivery" : order.payment_method} ({order.payment_status})
-                  </span>
-                </div>
-              </div>
+                </AnimatePresence>
+              </motion.div>
             );
           })}
         </div>
       )}
+    </div>
+  );
+}
+
+/* ─── WISHLIST TAB ─── */
+function WishlistTab() {
+  const { wishlistIds, toggle } = useWishlist();
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { addItem } = useCart();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const ids = Array.from(wishlistIds);
+    if (ids.length === 0) { setProducts([]); setLoading(false); return; }
+    supabase.from("products").select("*").in("id", ids)
+      .then(({ data }) => { setProducts(data || []); setLoading(false); });
+  }, [wishlistIds]);
+
+  if (loading) return <div className="text-center py-10"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto" /></div>;
+
+  if (products.length === 0) {
+    return (
+      <div className="text-center py-16">
+        <Heart className="h-12 w-12 text-muted-foreground/40 mx-auto mb-4" />
+        <p className="text-muted-foreground mb-4">Your wishlist is empty.</p>
+        <Link to="/products"><Button className="bg-primary text-primary-foreground">Browse Products</Button></Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      {products.map((p) => (
+        <div key={p.id} className="glass-card rounded-xl overflow-hidden">
+          <Link to={`/products/${p.id}`}>
+            <div className="aspect-square overflow-hidden bg-muted">
+              <img src={p.image_url || "/placeholder.svg"} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
+            </div>
+          </Link>
+          <div className="p-3">
+            <h3 className="font-semibold text-sm text-foreground line-clamp-1">{p.name}</h3>
+            <p className="text-lg font-bold text-primary">₹{p.price}</p>
+            <div className="flex gap-2 mt-2">
+              <Button size="sm" className="flex-1 gap-1 bg-primary text-primary-foreground text-xs"
+                onClick={() => { addItem({ id: p.id, name: p.name, price: p.price, category: p.category, image_url: p.image_url, stock: p.stock }); toast({ title: "Added to cart!" }); }}>
+                <ShoppingCart className="h-3 w-3" /> Add
+              </Button>
+              <Button size="sm" variant="outline" className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                onClick={() => toggle(p.id)}>
+                <Trash2 className="h-3 w-3" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
