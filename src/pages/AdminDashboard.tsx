@@ -15,7 +15,7 @@ type Product = Database["public"]["Tables"]["products"]["Row"];
 type Order = Database["public"]["Tables"]["orders"]["Row"];
 type BlogPost = Database["public"]["Tables"]["blog_posts"]["Row"];
 
-type Tab = "overview" | "products" | "orders" | "blog";
+type Tab = "overview" | "products" | "orders" | "blog" | "delivery";
 
 export default function AdminDashboard() {
   const { user, isAdmin, loading, signOut } = useAuth();
