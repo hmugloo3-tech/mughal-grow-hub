@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/hooks/useCart";
 import { useToast } from "@/hooks/use-toast";
-import { testimonials, categories } from "@/data/siteData";
+import { testimonials, categories, blogPosts } from "@/data/siteData";
 import heroBg from "@/assets/hero-bg.jpg";
 import productPesticide from "@/assets/product-pesticide.jpg";
 import productFertilizer from "@/assets/product-fertilizer.jpg";
