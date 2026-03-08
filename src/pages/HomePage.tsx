@@ -93,7 +93,7 @@ export default function HomePage() {
       <section className="relative min-h-[85vh] md:min-h-[90vh] flex items-center overflow-hidden">
         <motion.div
           className="absolute inset-0"
-          style={{ y: useTransform(useScroll().scrollY, [0, 600], [0, 200]), scale: useTransform(useScroll().scrollY, [0, 600], [1, 1.15]) }}
+          style={{ y: heroY, scale: heroScale }}
         >
           <video
             autoPlay
