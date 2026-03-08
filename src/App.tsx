@@ -44,6 +44,10 @@ const App = () => (
               <Route path="/products/:id" element={<ProductDetailPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/blog" element={<BlogPage />} />
+              <Route path="/crop-advisor" element={<CropAdvisorPage />} />
+              <Route path="/pest-guide" element={<PestGuidePage />} />
+              <Route path="/fertilizer-guide" element={<FertilizerGuidePage />} />
+              <Route path="/seasonal-tips" element={<SeasonalTipsPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/auth" element={<AuthPage />} />
