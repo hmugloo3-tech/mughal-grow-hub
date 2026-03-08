@@ -93,20 +93,21 @@ export default function CheckoutPage() {
     const estDate = new Date();
     estDate.setDate(estDate.getDate() + estDays);
 
-    const { data: order, error } = await supabase.from("orders").insert({
+    const orderData = {
       user_id: user.id,
       customer_name: selectedAddress.full_name,
       customer_phone: selectedAddress.phone,
-      product_list: items.map((i) => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })),
+      product_list: items.map((i) => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })) as any,
       total_price: grandTotal,
       delivery_address_id: selectedAddress.id,
-      delivery_address_snapshot: selectedAddress,
+      delivery_address_snapshot: selectedAddress as any,
       delivery_charges: deliveryCharge,
       payment_method: paymentMethod,
-      payment_status: paymentMethod === "cod" ? "pending" : "pending",
+      payment_status: "pending",
       estimated_delivery: estDate.toISOString().split("T")[0],
       status: "pending" as any,
-    }).select().single();
+    };
+    const { data: order, error } = await supabase.from("orders").insert(orderData).select().single();
 
     if (error) {
       toast({ title: "Error placing order", description: error.message, variant: "destructive" });
