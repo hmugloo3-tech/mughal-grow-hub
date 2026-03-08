@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import {
-  Package, ShoppingCart, FileText, BarChart3, LogOut, Plus, Pencil, Trash2, X, Save, Truck, Settings, MapPin
+  Package, ShoppingCart, FileText, BarChart3, LogOut, Plus, Pencil, Trash2, X, Save, Truck, MapPin, Upload, Image as ImageIcon
 } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -34,7 +34,6 @@ export default function AdminDashboard() {
           </Button>
         </div>
 
-        {/* Tabs */}
         <div className="flex flex-wrap gap-2 mb-6">
           {([
             { id: "overview" as Tab, label: "Overview", icon: BarChart3 },
@@ -89,6 +88,78 @@ function OverviewTab() {
           <p className="text-sm text-muted-foreground">{s.label}</p>
         </div>
       ))}
+    </div>
+  );
+}
+
+function ImageUpload({ currentUrl, onUpload }: { currentUrl?: string | null; onUpload: (url: string) => void }) {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState<string | null>(currentUrl || null);
+  const { toast } = useToast();
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Please select an image file", variant: "destructive" });
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: "Image must be under 5MB", variant: "destructive" });
+      return;
+    }
+
+    setUploading(true);
+    const ext = file.name.split(".").pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+
+    const { error } = await supabase.storage.from("product-images").upload(fileName, file);
+    if (error) {
+      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+      setUploading(false);
+      return;
+    }
+
+    const { data: { publicUrl } } = supabase.storage.from("product-images").getPublicUrl(fileName);
+    setPreview(publicUrl);
+    onUpload(publicUrl);
+    setUploading(false);
+    toast({ title: "Image uploaded!" });
+  };
+
+  return (
+    <div>
+      <label className="text-sm font-medium block mb-1">Product Image</label>
+      <div className="flex gap-3 items-start">
+        <div
+          onClick={() => fileRef.current?.click()}
+          className="w-24 h-24 rounded-xl border-2 border-dashed border-input hover:border-primary cursor-pointer flex items-center justify-center bg-accent/50 overflow-hidden transition-colors"
+        >
+          {preview ? (
+            <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+          ) : uploading ? (
+            <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
+          ) : (
+            <div className="text-center">
+              <Upload className="h-5 w-5 text-muted-foreground mx-auto mb-1" />
+              <span className="text-[10px] text-muted-foreground">Upload</span>
+            </div>
+          )}
+        </div>
+        <div className="flex-1">
+          <Input
+            value={preview || ""}
+            onChange={(e) => { setPreview(e.target.value); onUpload(e.target.value); }}
+            placeholder="Or paste image URL..."
+            className="text-sm"
+            maxLength={500}
+          />
+          <p className="text-[10px] text-muted-foreground mt-1">Upload an image or paste a URL. Max 5MB.</p>
+        </div>
+      </div>
+      <input ref={fileRef} type="file" accept="image/*" onChange={handleUpload} className="hidden" />
     </div>
   );
 }
@@ -177,13 +248,28 @@ function ProductsTab() {
               <Textarea value={editing.description || ""} onChange={(e) => setEditing({ ...editing, description: e.target.value })} maxLength={2000} rows={3} />
             </div>
             <div className="md:col-span-2">
-              <label className="text-sm font-medium block mb-1">Image URL</label>
-              <Input value={editing.image_url || ""} onChange={(e) => setEditing({ ...editing, image_url: e.target.value })} placeholder="https://..." maxLength={500} />
+              <ImageUpload
+                currentUrl={editing.image_url}
+                onUpload={(url) => setEditing({ ...editing, image_url: url })}
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="text-sm font-medium block mb-1">Benefits (comma-separated)</label>
+              <Input
+                value={(editing.benefits || []).join(", ")}
+                onChange={(e) => setEditing({ ...editing, benefits: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) })}
+                placeholder="e.g. Fast-acting, Long-lasting, Rain-resistant"
+                maxLength={500}
+              />
             </div>
             <div className="md:col-span-2">
               <label className="text-sm font-medium block mb-1">Usage Instructions</label>
               <Textarea value={editing.usage_instructions || ""} onChange={(e) => setEditing({ ...editing, usage_instructions: e.target.value })} maxLength={2000} rows={2} />
             </div>
+            <label className="flex items-center gap-2">
+              <input type="checkbox" checked={editing.is_active ?? true} onChange={(e) => setEditing({ ...editing, is_active: e.target.checked })} />
+              <span className="text-sm">Active (visible to customers)</span>
+            </label>
           </div>
           <div className="flex justify-end mt-4">
             <Button onClick={save} className="gap-1 bg-primary text-primary-foreground"><Save className="h-4 w-4" /> Save Product</Button>
@@ -194,12 +280,19 @@ function ProductsTab() {
       <div className="space-y-3">
         {products.length === 0 && <p className="text-muted-foreground text-center py-8">No products yet. Add your first product above.</p>}
         {products.map((p) => (
-          <div key={p.id} className="glass-card rounded-lg p-4 flex items-center justify-between">
-            <div>
-              <p className="font-semibold text-foreground">{p.name}</p>
-              <p className="text-sm text-muted-foreground">{p.category} · ₹{p.price} · Stock: {p.stock}</p>
+          <div key={p.id} className="glass-card rounded-lg p-4 flex items-center gap-3">
+            <div className="w-12 h-12 rounded-lg overflow-hidden bg-muted shrink-0">
+              {p.image_url ? (
+                <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center"><ImageIcon className="h-5 w-5 text-muted-foreground" /></div>
+              )}
             </div>
-            <div className="flex gap-2">
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-foreground truncate">{p.name}</p>
+              <p className="text-sm text-muted-foreground">{p.category} · ₹{p.price} · Stock: {p.stock} {!p.is_active && "· ⚠️ Inactive"}</p>
+            </div>
+            <div className="flex gap-2 shrink-0">
               <button onClick={() => setEditing(p)} className="p-2 rounded-lg hover:bg-accent"><Pencil className="h-4 w-4 text-primary" /></button>
               <button onClick={() => remove(p.id)} className="p-2 rounded-lg hover:bg-destructive/10"><Trash2 className="h-4 w-4 text-destructive" /></button>
             </div>
@@ -251,7 +344,7 @@ function OrdersTab() {
       {orders.length === 0 && <p className="text-muted-foreground text-center py-8">No orders yet.</p>}
       {orders.map((o) => {
         const items = o.product_list as any[];
-        const addr = (o as any).delivery_address_snapshot as any;
+        const addr = o.delivery_address_snapshot as any;
         return (
           <div key={o.id} className="glass-card rounded-xl p-5 mb-4">
             <div className="flex flex-wrap justify-between items-start gap-3 mb-3">
@@ -274,7 +367,6 @@ function OrdersTab() {
               </div>
             </div>
 
-            {/* Items */}
             <div className="border-t border-border pt-3 mb-3">
               {Array.isArray(items) && items.map((item: any, i: number) => (
                 <div key={i} className="flex justify-between text-sm py-0.5">
@@ -282,15 +374,14 @@ function OrdersTab() {
                   <span className="text-foreground">₹{item.price * item.quantity}</span>
                 </div>
               ))}
-              {(o as any).delivery_charges > 0 && (
+              {o.delivery_charges > 0 && (
                 <div className="flex justify-between text-sm py-0.5">
                   <span className="text-muted-foreground">Delivery</span>
-                  <span className="text-foreground">₹{(o as any).delivery_charges}</span>
+                  <span className="text-foreground">₹{o.delivery_charges}</span>
                 </div>
               )}
             </div>
 
-            {/* Address */}
             {addr && (
               <div className="bg-accent rounded-lg p-3 mb-3 flex items-start gap-2">
                 <MapPin className="h-4 w-4 text-primary mt-0.5 shrink-0" />
@@ -301,24 +392,21 @@ function OrdersTab() {
               </div>
             )}
 
-            {/* Payment & Tracking */}
             <div className="flex flex-wrap gap-3 text-xs text-muted-foreground mb-3">
-              <span>💳 {(o as any).payment_method?.toUpperCase() || "COD"}</span>
-              <span>💰 Payment: {(o as any).payment_status || "pending"}</span>
-              {(o as any).estimated_delivery && <span>📅 Est: {new Date((o as any).estimated_delivery).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</span>}
+              <span>💳 {o.payment_method?.toUpperCase() || "COD"}</span>
+              <span>💰 Payment: {o.payment_status || "pending"}</span>
+              {o.estimated_delivery && <span>📅 Est: {new Date(o.estimated_delivery).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</span>}
             </div>
 
-            {/* Tracking notes */}
-            {(o as any).tracking_notes && ((o as any).tracking_notes as string[]).length > 0 && (
+            {o.tracking_notes && (o.tracking_notes as string[]).length > 0 && (
               <div className="bg-accent rounded-lg p-3 mb-3">
                 <p className="text-xs font-semibold text-foreground mb-1">Tracking Updates</p>
-                {((o as any).tracking_notes as string[]).map((note, i) => (
+                {(o.tracking_notes as string[]).map((note, i) => (
                   <p key={i} className="text-xs text-muted-foreground">• {note}</p>
                 ))}
               </div>
             )}
 
-            {/* Add tracking note */}
             <div className="flex gap-2">
               <Input
                 placeholder="Add tracking note..."
