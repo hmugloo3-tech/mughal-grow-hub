@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ShieldCheck, Leaf, Award, Truck, Star, ArrowRight, Lightbulb, Users, TrendingUp, ShoppingCart, RefreshCw, Microscope, Bug, FlaskConical, CalendarDays, ScanLine } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
