@@ -129,18 +129,23 @@ export default function HomePage() {
           className="absolute inset-0"
           style={{ y: heroY, scale: heroScale }}
         >
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            poster={heroPoster}
-            className="w-full h-full object-cover"
-          >
-            <source src="/hero-video.mp4" type="video/mp4" />
+          {!videoFailed ? (
+            <video
+              ref={videoRef}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              poster={heroPoster}
+              className="w-full h-full object-cover"
+              onError={() => setVideoFailed(true)}
+            >
+              <source src="/hero-video.mp4" type="video/mp4" />
+            </video>
+          ) : (
             <img src={heroPoster} alt="Agricultural farmland in Kashmir valley" className="w-full h-full object-cover" />
-          </video>
+          )}
           <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 via-foreground/65 to-foreground/30 md:to-foreground/10" />
         </motion.div>
         <div className="container-custom relative z-10 py-24 md:py-32">
