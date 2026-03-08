@@ -40,6 +40,9 @@ export default function HomePage() {
   const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
   const { addItem } = useCart();
   const { toast } = useToast();
+  const { scrollY } = useScroll();
+  const heroY = useTransform(scrollY, [0, 600], [0, 200]);
+  const heroScale = useTransform(scrollY, [0, 600], [1, 1.15]);
 
   // Pull-to-refresh state
   const [isRefreshing, setIsRefreshing] = useState(false);
