@@ -141,11 +141,11 @@ export default function HomePage() {
             <p className="text-muted-foreground">Top-selling products trusted by farmers across Kashmir.</p>
           </motion.div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {products.slice(0, 4).map((product, i) => (
+            {featuredProducts.map((product, i) => (
               <motion.div key={product.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
                 <div className="glass-card-hover rounded-xl overflow-hidden group">
                   <div className="aspect-square overflow-hidden bg-muted">
-                    <img src={categoryImages[product.category]} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                    <img src={product.image_url || categoryImages[product.category] || productPesticide} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                   </div>
                   <div className="p-5">
                     <span className="text-xs font-medium text-primary bg-accent rounded-full px-3 py-1">{categories.find(c => c.id === product.category)?.name}</span>
@@ -157,16 +157,16 @@ export default function HomePage() {
                         {product.stock > 0 ? "In Stock" : "Out of Stock"}
                       </span>
                     </div>
-                    <a
-                      href={`https://wa.me/916006561732?text=Hi! I want to order: ${product.name} (₹${product.price})`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-4 block"
+                    <Button
+                      onClick={() => {
+                        addItem({ id: product.id, name: product.name, price: product.price, category: product.category, image_url: product.image_url || categoryImages[product.category], stock: product.stock });
+                        toast({ title: `${product.name} added to cart!` });
+                      }}
+                      disabled={product.stock <= 0}
+                      className="w-full mt-4 bg-primary text-primary-foreground hover:bg-primary/90 gap-2"
                     >
-                      <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 gap-2">
-                        Order via WhatsApp
-                      </Button>
-                    </a>
+                      <ShoppingCart className="h-4 w-4" /> Add to Cart
+                    </Button>
                   </div>
                 </div>
               </motion.div>
