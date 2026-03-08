@@ -13,6 +13,7 @@ const navLinks = [
   { name: "Products", path: "/products" },
   { name: "Farmer Guide", path: "/farmer-guide", children: [
     { name: "🌿 Crop Advisor", path: "/crop-advisor" },
+    { name: "🔬 Disease Detector", path: "/disease-detector" },
     { name: "🐛 Pest Guide", path: "/pest-guide" },
     { name: "🌱 Fertilizer Guide", path: "/fertilizer-guide" },
     { name: "📅 Seasonal Tips", path: "/seasonal-tips" },

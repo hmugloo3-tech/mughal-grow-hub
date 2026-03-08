@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ShieldCheck, Leaf, Award, Truck, Star, ArrowRight, Lightbulb, Users, TrendingUp, ShoppingCart, RefreshCw, Microscope, Bug, FlaskConical, CalendarDays } from "lucide-react";
+import { ShieldCheck, Leaf, Award, Truck, Star, ArrowRight, Lightbulb, Users, TrendingUp, ShoppingCart, RefreshCw, Microscope, Bug, FlaskConical, CalendarDays, ScanLine } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -320,6 +320,18 @@ export default function HomePage() {
                 accent: "from-primary/15 to-primary/5",
                 iconBg: "bg-primary/15",
                 iconColor: "text-primary",
+              },
+              {
+                icon: ScanLine,
+                title: "Disease Detector",
+                subtitle: "AI Leaf Scanner",
+                desc: "Upload a photo of any crop leaf and instantly detect diseases with AI. Get treatment advice, pesticide dosage, and organic alternatives.",
+                features: ["Photo-based diagnosis", "Treatment plans", "Severity assessment"],
+                link: "/disease-detector",
+                cta: "Scan a Leaf",
+                accent: "from-orange-500/15 to-orange-500/5",
+                iconBg: "bg-orange-500/15",
+                iconColor: "text-orange-500",
               },
               {
                 icon: Bug,
