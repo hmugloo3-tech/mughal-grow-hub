@@ -25,7 +25,7 @@ export default function AboutPage() {
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}>
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Our Story</h2>
               <p className="text-muted-foreground leading-relaxed mb-4">
-                Mughal Pesticides & Fertilizer was founded with a simple mission — to provide farmers in Kashmir with genuine, high-quality agricultural products at fair prices. Located in Gadole, Kokernag, Anantnag, we have been serving the farming community with dedication and trust.
+                Mughal Pesticides & Fertilizer was founded with a simple mission — to provide farmers in Kashmir with genuine, high-quality agricultural products at fair prices. Located in Gadole Ahlan, Kokernag, Anantnag, we have been serving the farming community with dedication and trust.
               </p>
               <p className="text-muted-foreground leading-relaxed mb-4">
                 Over the years, we have grown from a small local shop to a trusted name in agricultural supplies. We stock products from leading national and international brands, carefully selected to meet the specific needs of Kashmir's unique agricultural landscape.

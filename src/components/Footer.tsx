@@ -53,7 +53,7 @@ export default function Footer() {
             <div className="flex flex-col gap-3">
               <div className="flex items-start gap-2 text-sm text-primary-foreground/80">
                 <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-secondary" />
-                <span>Kashmir, Anantnag, Kokernag, Gadole - 192202</span>
+                <span>Kashmir, Anantnag, Kokernag, Gadole Ahlan - 192202</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-primary-foreground/80">
                 <Phone className="h-4 w-4 shrink-0 text-secondary" />

@@ -65,7 +65,7 @@ export default function ContactPage() {
             <h2 className="text-2xl font-bold text-foreground mb-6">Get in Touch</h2>
             <div className="space-y-6">
               {[
-                { icon: MapPin, label: "Address", value: "Gadole, Kokernag, Anantnag\nKashmir - 192202" },
+                { icon: MapPin, label: "Address", value: "Gadole Ahlan, Kokernag, Anantnag\nKashmir - 192202" },
                 { icon: Phone, label: "Phone", value: "+91 6006561732", href: "tel:+916006561732" },
                 { icon: Mail, label: "Email", value: "hamidmugloo89@gmail.com", href: "mailto:hamidmugloo89@gmail.com" },
                 { icon: Clock, label: "Hours", value: "Mon-Sat: 8:00 AM - 7:00 PM\nSunday: 9:00 AM - 2:00 PM" },
@@ -89,7 +89,7 @@ export default function ContactPage() {
             <div className="mt-8 rounded-xl overflow-hidden shadow-lg">
               <iframe
                 title="Mughal Pesticides Location"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d26520.1!2d75.28!3d33.62!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38e1a6d7e5d5e5e5%3A0x0!2sKokernag%2C%20Jammu%20and%20Kashmir!5e0!3m2!1sen!2sin!4v1"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3318.0!2d75.2596!3d33.5850!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38e1a6c0c0c0c0c0%3A0x0!2sGadole%20Ahlan%2C%20Kokernag%2C%20Anantnag%2C%20Jammu%20and%20Kashmir%20192202!5e0!3m2!1sen!2sin!4v1"
                 width="100%"
                 height="250"
                 style={{ border: 0 }}
