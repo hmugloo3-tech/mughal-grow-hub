@@ -9,7 +9,7 @@ import { useCart } from "@/hooks/useCart";
 import { useToast } from "@/hooks/use-toast";
 import { testimonials, categories, blogPosts } from "@/data/siteData";
 import SEO from "@/components/SEO";
-import heroBg from "@/assets/hero-bg.jpg";
+import heroPoster from "@/assets/hero-poster.jpg";
 import productPesticide from "@/assets/product-pesticide.jpg";
 import productFertilizer from "@/assets/product-fertilizer.jpg";
 import productSeeds from "@/assets/product-seeds.jpg";
@@ -89,8 +89,20 @@ export default function HomePage() {
       {/* Hero */}
       <section className="relative min-h-[85vh] md:min-h-[90vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
-          <img src={heroBg} alt="Agricultural farmland in Kashmir valley" className="w-full h-full object-cover" loading="eager" width={1920} height={1080} />
-          <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 via-foreground/60 to-foreground/20 md:to-transparent" />
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            poster={heroPoster}
+            className="w-full h-full object-cover"
+          >
+            <source src="/hero-video.mp4" type="video/mp4" />
+            {/* Fallback poster image if video can't play */}
+            <img src={heroPoster} alt="Agricultural farmland in Kashmir valley" className="w-full h-full object-cover" />
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 via-foreground/65 to-foreground/30 md:to-foreground/10" />
         </div>
         <div className="container-custom relative z-10 py-24 md:py-32">
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-2xl">
