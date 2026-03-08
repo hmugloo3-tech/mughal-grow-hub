@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { MapPin, Phone, Mail, Leaf } from "lucide-react";
+import { MapPin, Phone, Mail } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 export default function Footer() {
   return (
@@ -7,8 +8,8 @@ export default function Footer() {
       <div className="container-custom py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <Leaf className="h-8 w-8 text-secondary" />
+            <div className="flex items-center gap-3 mb-4">
+              <img src={logo} alt="Mughal Pesticides" className="h-14 w-14 rounded-xl object-contain bg-white p-1 shadow-md" />
               <div>
                 <h3 className="font-bold text-lg">Mughal Pesticides</h3>
                 <p className="text-xs text-primary-foreground/70">& Fertilizer</p>
