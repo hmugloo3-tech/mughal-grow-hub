@@ -10,8 +10,14 @@ import logo from "@/assets/logo.png";
 const navLinks = [
   { name: "Home", path: "/" },
   { name: "Products", path: "/products" },
+  { name: "Farmer Guide", path: "/farmer-guide", children: [
+    { name: "🌿 Crop Advisor", path: "/crop-advisor" },
+    { name: "🐛 Pest Guide", path: "/pest-guide" },
+    { name: "🌱 Fertilizer Guide", path: "/fertilizer-guide" },
+    { name: "📅 Seasonal Tips", path: "/seasonal-tips" },
+    { name: "📰 Blog", path: "/blog" },
+  ]},
   { name: "About", path: "/about" },
-  { name: "Tips & Blog", path: "/blog" },
   { name: "Contact", path: "/contact" },
 ];
 
