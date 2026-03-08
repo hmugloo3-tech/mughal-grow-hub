@@ -20,6 +20,7 @@ import CropAdvisorPage from "./pages/CropAdvisorPage";
 import PestGuidePage from "./pages/PestGuidePage";
 import FertilizerGuidePage from "./pages/FertilizerGuidePage";
 import SeasonalTipsPage from "./pages/SeasonalTipsPage";
+import CropDiseaseDetectorPage from "./pages/CropDiseaseDetectorPage";
 import ContactPage from "./pages/ContactPage";
 import CartPage from "./pages/CartPage";
 import AuthPage from "./pages/AuthPage";
