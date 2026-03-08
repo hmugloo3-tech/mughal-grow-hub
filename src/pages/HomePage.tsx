@@ -38,12 +38,13 @@ const stats = [
 ];
 
 export default function HomePage() {
+  const isMobile = useIsMobile();
   const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
   const { addItem } = useCart();
   const { toast } = useToast();
   const { scrollY } = useScroll();
-  const heroY = useTransform(scrollY, [0, 600], [0, 200]);
-  const heroScale = useTransform(scrollY, [0, 600], [1, 1.15]);
+  const heroY = useTransform(scrollY, [0, 600], [0, isMobile ? 0 : 200]);
+  const heroScale = useTransform(scrollY, [0, 600], [1, isMobile ? 1 : 1.15]);
 
   // Video reliability: force play on visibility and handle buffering
   const videoRef = useRef<HTMLVideoElement>(null);
