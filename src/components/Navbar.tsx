@@ -89,25 +89,12 @@ export default function Navbar() {
             )}
           </Link>
 
-          {/* User menu */}
-          {user ? (
+          {/* User icon (logged in only) */}
+          {user && (
             <Link to={isAdmin ? "/admin" : "/dashboard"} className="p-2 rounded-lg hover:bg-accent transition-colors">
               <User className="h-5 w-5 text-primary" />
             </Link>
-          ) : (
-            <Link to="/auth">
-              <Button variant="outline" size="sm" className="hidden md:inline-flex gap-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                <User className="h-4 w-4" /> Sign In
-              </Button>
-            </Link>
           )}
-
-          {/* WhatsApp */}
-          <a href="https://wa.me/916006561732" target="_blank" rel="noopener noreferrer" className="hidden md:inline-flex">
-            <Button variant="outline" size="sm" className="gap-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-              <Phone className="h-4 w-4" /> WhatsApp
-            </Button>
-          </a>
 
           <button className="lg:hidden p-2" onClick={() => setOpen(!open)}>
             {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
