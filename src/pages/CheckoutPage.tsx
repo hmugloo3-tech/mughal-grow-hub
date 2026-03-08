@@ -73,8 +73,29 @@ export default function CheckoutPage() {
   if (items.length === 0) return <Navigate to="/cart" replace />;
 
   const deliveryCharge = totalPrice >= settings.free_delivery_above ? 0 : settings.base_charge;
-  const grandTotal = totalPrice + deliveryCharge;
+  const couponDiscount = appliedCoupon
+    ? appliedCoupon.discount_type === "percentage"
+      ? Math.round(totalPrice * appliedCoupon.discount_value / 100)
+      : appliedCoupon.discount_value
+    : 0;
+  const grandTotal = Math.max(0, totalPrice + deliveryCharge - couponDiscount);
   const selectedAddress = addresses.find((a) => a.id === selectedAddressId);
+
+  const applyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setCouponLoading(true);
+    setCouponError("");
+    const { data, error } = await supabase.from("coupons").select("*").eq("code", couponCode.trim().toUpperCase()).eq("is_active", true).single();
+    if (error || !data) { setCouponError("Invalid or expired coupon code"); setCouponLoading(false); return; }
+    if (data.min_order_amount > 0 && totalPrice < data.min_order_amount) { setCouponError(`Minimum order ₹${data.min_order_amount} required`); setCouponLoading(false); return; }
+    if (data.max_uses && data.used_count >= data.max_uses) { setCouponError("Coupon usage limit reached"); setCouponLoading(false); return; }
+    setAppliedCoupon({ code: data.code, discount_type: data.discount_type, discount_value: Number(data.discount_value) });
+    setCouponCode("");
+    setCouponLoading(false);
+    toast({ title: `Coupon "${data.code}" applied!` });
+  };
+
+  const removeCoupon = () => { setAppliedCoupon(null); setCouponError(""); };
 
   const saveAddress = async () => {
     if (!newAddr.full_name || !newAddr.phone || !newAddr.address_line1 || !newAddr.pincode) {
