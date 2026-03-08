@@ -66,11 +66,18 @@ export default function ProductsPage() {
   useEffect(() => {
     supabase.from("products").select("*").eq("is_active", true).order("created_at", { ascending: false })
       .then(({ data }) => {
-        setProducts(data || []);
-        if (data && data.length > 0) {
-          const maxP = Math.max(...data.map(p => p.price));
+        const items = data || [];
+        setProducts(items);
+        if (items.length > 0) {
+          const maxP = Math.max(...items.map(p => p.price));
           setPriceRange([0, Math.ceil(maxP / 100) * 100]);
         }
+        // Preload all product images for instant display
+        items.forEach((p) => {
+          const src = p.image_url || fallbackImages[p.category] || productPesticide;
+          const img = new Image();
+          img.src = src;
+        });
         setLoading(false);
       });
   }, []);
@@ -307,7 +314,7 @@ export default function ProductsPage() {
                       src={product.image_url || fallbackImages[product.category] || productPesticide}
                       alt={product.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                      loading="lazy"
+                      loading={i < 8 ? "eager" : "lazy"}
                       width={400} height={400}
                     />
                     <div className="hidden md:flex absolute inset-0 bg-foreground/0 group-hover:bg-foreground/20 transition-all duration-300 items-center justify-center">
