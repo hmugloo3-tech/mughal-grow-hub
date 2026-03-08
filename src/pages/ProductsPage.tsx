@@ -1,3 +1,4 @@
+import SEO from "@/components/SEO";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -71,6 +72,7 @@ export default function ProductsPage() {
 
   return (
     <div className="min-h-screen pt-20 md:pt-24">
+      <SEO title="Agricultural Products – Pesticides, Fertilizers & Seeds" description="Browse premium pesticides, fertilizers, seeds, growth promoters & farming tools. Best prices in Kashmir with home delivery." />
       <section className="hero-gradient py-12 md:py-16">
         <div className="container-custom text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-3">Our Products</h1>

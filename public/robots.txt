@@ -12,3 +12,10 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /admin/login
+Disallow: /checkout
+Disallow: /dashboard
+
+Sitemap: https://mughalpesticides.lovable.app/sitemap.xml
+Allow: /

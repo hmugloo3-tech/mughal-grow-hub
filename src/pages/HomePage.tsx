@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/hooks/useCart";
 import { useToast } from "@/hooks/use-toast";
 import { testimonials, categories, blogPosts } from "@/data/siteData";
+import SEO from "@/components/SEO";
 import heroBg from "@/assets/hero-bg.jpg";
 import productPesticide from "@/assets/product-pesticide.jpg";
 import productFertilizer from "@/assets/product-fertilizer.jpg";
@@ -46,25 +47,24 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
+      <SEO
+        title="Mughal Pesticides & Fertilizer – Trusted Partner for Healthy Crops in Kashmir"
+        description="Premium pesticides, fertilizers, seeds & farming tools in Anantnag, Kashmir. Quality agricultural products for maximum crop yield. Order online with home delivery."
+      />
+
       {/* Hero */}
       <section className="relative min-h-[90vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
-          <img src={heroBg} alt="Agricultural farmland" className="w-full h-full object-cover" loading="eager" />
+          <img src={heroBg} alt="Agricultural farmland in Kashmir valley" className="w-full h-full object-cover" loading="eager" width={1920} height={1080} />
           <div className="absolute inset-0 bg-gradient-to-r from-foreground/80 via-foreground/50 to-transparent" />
         </div>
         <div className="container-custom relative z-10 py-32">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-2xl"
-          >
+          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-2xl">
             <span className="inline-block px-4 py-1.5 rounded-full bg-secondary text-secondary-foreground text-sm font-semibold mb-6">
               🌾 Premium Agricultural Solutions
             </span>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-background leading-tight mb-6">
-              Trusted Partner for{" "}
-              <span className="text-secondary">Healthy Crops</span>
+              Trusted Partner for <span className="text-secondary">Healthy Crops</span>
             </h1>
             <p className="text-lg text-background/80 mb-8 max-w-xl">
               Your one-stop destination for premium pesticides, fertilizers, seeds, and farming tools in Kashmir. Quality products for maximum yield.
@@ -90,15 +90,7 @@ export default function HomePage() {
         <div className="container-custom">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {stats.map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUp}
-                className="glass-card rounded-xl p-6 text-center"
-              >
+              <motion.div key={stat.label} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="glass-card rounded-xl p-6 text-center">
                 <stat.icon className="h-8 w-8 text-primary mx-auto mb-2" />
                 <p className="text-2xl md:text-3xl font-bold text-primary">{stat.value}</p>
                 <p className="text-sm text-muted-foreground">{stat.label}</p>
@@ -109,7 +101,7 @@ export default function HomePage() {
       </section>
 
       {/* Categories */}
-      <section className="section-padding">
+      <section className="section-padding" aria-label="Product Categories">
         <div className="container-custom">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Our Product Categories</h2>
@@ -120,7 +112,7 @@ export default function HomePage() {
               <motion.div key={cat.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
                 <Link to="/products" className="glass-card-hover rounded-xl overflow-hidden block group">
                   <div className="aspect-square overflow-hidden">
-                    <img src={categoryImages[cat.id]} alt={cat.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" />
+                    <img src={categoryImages[cat.id]} alt={`${cat.name} products`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" width={300} height={300} />
                   </div>
                   <div className="p-4 text-center">
                     <span className="text-2xl">{cat.icon}</span>
@@ -134,7 +126,7 @@ export default function HomePage() {
       </section>
 
       {/* Featured Products */}
-      <section className="section-padding bg-accent/30">
+      <section className="section-padding bg-accent/30" aria-label="Featured Products">
         <div className="container-custom">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Featured Products</h2>
@@ -143,10 +135,12 @@ export default function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredProducts.map((product, i) => (
               <motion.div key={product.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
-                <div className="glass-card-hover rounded-xl overflow-hidden group">
-                  <div className="aspect-square overflow-hidden bg-muted">
-                    <img src={product.image_url || categoryImages[product.category] || productPesticide} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
-                  </div>
+                <article className="glass-card-hover rounded-xl overflow-hidden group">
+                  <Link to={`/products/${product.id}`} className="block">
+                    <div className="aspect-square overflow-hidden bg-muted">
+                      <img src={product.image_url || categoryImages[product.category] || productPesticide} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" width={400} height={400} />
+                    </div>
+                  </Link>
                   <div className="p-5">
                     <span className="text-xs font-medium text-primary bg-accent rounded-full px-3 py-1">{categories.find(c => c.id === product.category)?.name}</span>
                     <h3 className="font-semibold text-foreground mt-3 mb-1">{product.name}</h3>
@@ -168,7 +162,7 @@ export default function HomePage() {
                       <ShoppingCart className="h-4 w-4" /> Add to Cart
                     </Button>
                   </div>
-                </div>
+                </article>
               </motion.div>
             ))}
           </div>
@@ -183,7 +177,7 @@ export default function HomePage() {
       </section>
 
       {/* Why Choose Us */}
-      <section className="section-padding">
+      <section className="section-padding" aria-label="Why Choose Us">
         <div className="container-custom">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Why Choose Us?</h2>
@@ -197,8 +191,7 @@ export default function HomePage() {
               { icon: Truck, title: "Home Delivery", desc: "Convenient delivery service across Kashmir region." },
             ].map((item, i) => (
               <motion.div key={item.title} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-                className="glass-card-hover rounded-xl p-6 text-center"
-              >
+                className="glass-card-hover rounded-xl p-6 text-center">
                 <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-accent mb-4">
                   <item.icon className="h-7 w-7 text-primary" />
                 </div>
@@ -211,7 +204,7 @@ export default function HomePage() {
       </section>
 
       {/* Testimonials */}
-      <section className="section-padding bg-primary text-primary-foreground">
+      <section className="section-padding bg-primary text-primary-foreground" aria-label="Customer Testimonials">
         <div className="container-custom">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-3">What Farmers Say</h2>
@@ -220,8 +213,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <motion.div key={t.name} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-                className="bg-primary-foreground/10 backdrop-blur-sm rounded-xl p-6 border border-primary-foreground/20"
-              >
+                className="bg-primary-foreground/10 backdrop-blur-sm rounded-xl p-6 border border-primary-foreground/20">
                 <div className="flex gap-1 mb-4">
                   {[...Array(5)].map((_, j) => <Star key={j} className="h-4 w-4 fill-secondary text-secondary" />)}
                 </div>
@@ -237,7 +229,7 @@ export default function HomePage() {
       </section>
 
       {/* Tips Preview */}
-      <section className="section-padding">
+      <section className="section-padding" aria-label="Agriculture Tips">
         <div className="container-custom">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Agriculture Tips</h2>
@@ -249,7 +241,7 @@ export default function HomePage() {
                 <Link to="/blog" className="glass-card-hover rounded-xl overflow-hidden block group">
                   <div className="aspect-video overflow-hidden bg-muted">
                     <img src={categoryImages[post.category === "Pest Control" ? "pesticides" : post.category === "Fertilizers" ? "fertilizers" : post.category === "Crop Guide" ? "seeds" : "growth-promoters"]}
-                      alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                      alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" width={400} height={225} />
                   </div>
                   <div className="p-5">
                     <span className="text-xs font-medium text-secondary">{post.category}</span>
@@ -264,11 +256,10 @@ export default function HomePage() {
       </section>
 
       {/* Newsletter CTA */}
-      <section className="section-padding bg-accent/30">
+      <section className="section-padding bg-accent/30" aria-label="Subscribe">
         <div className="container-custom">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}
-            className="glass-card rounded-2xl p-8 md:p-12 text-center max-w-2xl mx-auto"
-          >
+            className="glass-card rounded-2xl p-8 md:p-12 text-center max-w-2xl mx-auto">
             <Lightbulb className="h-10 w-10 text-secondary mx-auto mb-4" />
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">Stay Updated</h2>
             <p className="text-muted-foreground mb-6">Get the latest farming tips, product updates, and seasonal offers delivered to your phone.</p>
@@ -280,6 +271,28 @@ export default function HomePage() {
           </motion.div>
         </div>
       </section>
+
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Store",
+            name: "Mughal Pesticides & Fertilizer",
+            description: "Premium pesticides, fertilizers, seeds & farming tools in Kashmir",
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: "Anantnag",
+              addressRegion: "Jammu & Kashmir",
+              addressCountry: "IN",
+            },
+            telephone: "+916006561732",
+            priceRange: "₹",
+            openingHours: "Mo-Sa 09:00-19:00",
+          }),
+        }}
+      />
     </div>
   );
 }
