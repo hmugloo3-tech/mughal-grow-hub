@@ -76,7 +76,11 @@ export default function HomePage() {
   }, [pullDistance, fetchProducts, toast]);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen" ref={containerRef} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
+      {/* Pull-to-refresh indicator */}
+      <div className="lg:hidden flex justify-center overflow-hidden transition-all duration-300" style={{ height: pullDistance }}>
+        <RefreshCw className={`h-6 w-6 text-primary mt-2 transition-transform ${isRefreshing ? "animate-spin" : ""} ${pullDistance > 60 ? "text-secondary" : ""}`} style={{ transform: `rotate(${pullDistance * 3}deg)` }} />
+      </div>
       <SEO
         title="Mughal Pesticides & Fertilizer – Trusted Partner for Healthy Crops in Kashmir"
         description="Premium pesticides, fertilizers, seeds & farming tools in Anantnag, Kashmir. Quality agricultural products for maximum crop yield. Order online with home delivery."
