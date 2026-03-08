@@ -301,7 +301,7 @@ export default function ProductsPage() {
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
             {filtered.map((product, i) => (
               <motion.div key={product.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
-                <div className="rounded-xl overflow-hidden bg-card border border-border group h-full flex flex-col hover:shadow-[var(--shadow-hover)] transition-all duration-300 hover:-translate-y-1">
+                <div className="relative rounded-xl overflow-hidden bg-card border border-border group h-full flex flex-col hover:shadow-[var(--shadow-hover)] transition-all duration-300 hover:-translate-y-1">
                   <Link to={`/products/${product.id}`} className="block aspect-square overflow-hidden bg-muted relative">
                     <img
                       src={product.image_url || fallbackImages[product.category] || productPesticide}
