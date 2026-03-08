@@ -55,8 +55,10 @@ const quickCategories = [
   },
 ];
 
-// Web Speech API helper
-const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+// Web Speech API helper - lazily accessed to avoid SSR/module-level issues
+function getSpeechRecognition(): any {
+  return (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition || null;
+}
 
 export default function AIChatWidget() {
   const [open, setOpen] = useState(false);
