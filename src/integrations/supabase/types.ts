@@ -53,44 +53,154 @@ export type Database = {
         }
         Relationships: []
       }
+      delivery_addresses: {
+        Row: {
+          address_line1: string
+          address_line2: string | null
+          created_at: string
+          district: string
+          full_name: string
+          id: string
+          is_default: boolean
+          label: string
+          phone: string
+          pincode: string
+          state: string
+          updated_at: string
+          user_id: string
+          village: string | null
+        }
+        Insert: {
+          address_line1: string
+          address_line2?: string | null
+          created_at?: string
+          district?: string
+          full_name: string
+          id?: string
+          is_default?: boolean
+          label?: string
+          phone: string
+          pincode: string
+          state?: string
+          updated_at?: string
+          user_id: string
+          village?: string | null
+        }
+        Update: {
+          address_line1?: string
+          address_line2?: string | null
+          created_at?: string
+          district?: string
+          full_name?: string
+          id?: string
+          is_default?: boolean
+          label?: string
+          phone?: string
+          pincode?: string
+          state?: string
+          updated_at?: string
+          user_id?: string
+          village?: string | null
+        }
+        Relationships: []
+      }
+      delivery_settings: {
+        Row: {
+          base_charge: number
+          estimated_days_district: number
+          estimated_days_local: number
+          free_delivery_above: number
+          id: string
+          is_delivery_active: boolean
+          updated_at: string
+        }
+        Insert: {
+          base_charge?: number
+          estimated_days_district?: number
+          estimated_days_local?: number
+          free_delivery_above?: number
+          id?: string
+          is_delivery_active?: boolean
+          updated_at?: string
+        }
+        Update: {
+          base_charge?: number
+          estimated_days_district?: number
+          estimated_days_local?: number
+          free_delivery_above?: number
+          id?: string
+          is_delivery_active?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           created_at: string
-          customer_name: string
-          customer_phone: string
+          customer_name: string | null
+          customer_phone: string | null
+          delivery_address_id: string | null
+          delivery_address_snapshot: Json | null
+          delivery_charges: number
+          estimated_delivery: string | null
           id: string
           notes: string | null
+          payment_method: string
+          payment_status: string
           product_list: Json
           status: Database["public"]["Enums"]["order_status"]
           total_price: number
+          tracking_notes: string[] | null
           updated_at: string
           user_id: string | null
         }
         Insert: {
           created_at?: string
-          customer_name: string
-          customer_phone: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          delivery_address_id?: string | null
+          delivery_address_snapshot?: Json | null
+          delivery_charges?: number
+          estimated_delivery?: string | null
           id?: string
           notes?: string | null
+          payment_method?: string
+          payment_status?: string
           product_list?: Json
           status?: Database["public"]["Enums"]["order_status"]
           total_price?: number
+          tracking_notes?: string[] | null
           updated_at?: string
           user_id?: string | null
         }
         Update: {
           created_at?: string
-          customer_name?: string
-          customer_phone?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          delivery_address_id?: string | null
+          delivery_address_snapshot?: Json | null
+          delivery_charges?: number
+          estimated_delivery?: string | null
           id?: string
           notes?: string | null
+          payment_method?: string
+          payment_status?: string
           product_list?: Json
           status?: Database["public"]["Enums"]["order_status"]
           total_price?: number
+          tracking_notes?: string[] | null
           updated_at?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "orders_delivery_address_id_fkey"
+            columns: ["delivery_address_id"]
+            isOneToOne: false
+            referencedRelation: "delivery_addresses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       products: {
         Row: {
