@@ -40,7 +40,8 @@ export default function AdminDashboard() {
             { id: "overview" as Tab, label: "Overview", icon: BarChart3 },
             { id: "products" as Tab, label: "Products", icon: Package },
             { id: "orders" as Tab, label: "Orders", icon: ShoppingCart },
-            { id: "blog" as Tab, label: "Blog Posts", icon: FileText },
+            { id: "delivery" as Tab, label: "Delivery", icon: Truck },
+            { id: "blog" as Tab, label: "Blog", icon: FileText },
           ]).map((t) => (
             <Button key={t.id} variant={tab === t.id ? "default" : "outline"} size="sm" onClick={() => setTab(t.id)}
               className={tab === t.id ? "bg-primary text-primary-foreground" : "border-primary text-primary hover:bg-primary hover:text-primary-foreground"}
