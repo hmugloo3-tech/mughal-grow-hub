@@ -93,7 +93,8 @@ export default function AIChatWidget() {
 
   // Voice input
   const toggleVoice = useCallback(() => {
-    if (!SpeechRecognition) {
+    const SR = getSpeechRecognition();
+    if (!SR) {
       toast.error("Voice input not supported in this browser");
       return;
     }
