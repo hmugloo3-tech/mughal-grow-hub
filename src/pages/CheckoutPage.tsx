@@ -151,28 +151,28 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="min-h-screen pt-20 md:pt-24">
-      <section className="hero-gradient py-8 md:py-12">
+    <div className="min-h-screen pt-16 lg:pt-24">
+      <section className="hero-gradient py-6 md:py-12">
         <div className="container-custom text-center">
-          <h1 className="text-2xl md:text-3xl font-bold text-primary-foreground">Checkout</h1>
+          <h1 className="text-xl md:text-3xl font-bold text-primary-foreground">Checkout</h1>
         </div>
       </section>
 
-      <div className="container-custom py-8">
+      <div className="container-custom py-4 md:py-8">
         {/* Steps indicator */}
-        <div className="flex items-center justify-center gap-2 mb-8">
+        <div className="flex items-center justify-center gap-1 md:gap-2 mb-6 md:mb-8">
           {[
             { n: 1, label: "Address", icon: MapPin },
             { n: 2, label: "Payment", icon: CreditCard },
             { n: 3, label: "Confirm", icon: Check },
           ].map((s, i) => (
             <div key={s.n} className="flex items-center">
-              <div className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+              <div className={`flex items-center gap-1 md:gap-1.5 px-3 md:px-4 py-2 rounded-full text-xs md:text-sm font-medium transition-all ${
                 step >= s.n ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
               }`}>
-                <s.icon className="h-4 w-4" /> {s.label}
+                <s.icon className="h-3.5 w-3.5 md:h-4 md:w-4" /> <span className="hidden sm:inline">{s.label}</span><span className="sm:hidden">{s.n}</span>
               </div>
-              {i < 2 && <div className={`w-8 h-0.5 mx-1 ${step > s.n ? "bg-primary" : "bg-muted"}`} />}
+              {i < 2 && <div className={`w-4 md:w-8 h-0.5 mx-0.5 md:mx-1 ${step > s.n ? "bg-primary" : "bg-muted"}`} />}
             </div>
           ))}
         </div>

@@ -9,6 +9,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import WhatsAppButton from "./components/WhatsAppButton";
 import AIChatWidget from "./components/AIChatWidget";
+import MobileBottomNav from "./components/MobileBottomNav";
 import HomePage from "./pages/HomePage";
 import ProductsPage from "./pages/ProductsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
@@ -37,27 +38,30 @@ function AppContent() {
   return (
     <>
       {!isAdmin && <Navbar />}
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/products" element={<ProductsPage />} />
-        <Route path="/products/:id" element={<ProductDetailPage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/blog" element={<BlogPage />} />
-        <Route path="/crop-advisor" element={<CropAdvisorPage />} />
-        <Route path="/pest-guide" element={<PestGuidePage />} />
-        <Route path="/fertilizer-guide" element={<FertilizerGuidePage />} />
-        <Route path="/seasonal-tips" element={<SeasonalTipsPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/cart" element={<CartPage />} />
-        <Route path="/auth" element={<AuthPage />} />
-        <Route path="/checkout" element={<CheckoutPage />} />
-        <Route path="/order-confirmation/:id" element={<OrderConfirmationPage />} />
-        <Route path="/dashboard" element={<CustomerDashboard />} />
-        <Route path="/admin/login" element={<AdminLoginPage />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-      {!isAdmin && <Footer />}
+      <div className={!isAdmin ? "pb-16 lg:pb-0" : ""}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/products/:id" element={<ProductDetailPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/crop-advisor" element={<CropAdvisorPage />} />
+          <Route path="/pest-guide" element={<PestGuidePage />} />
+          <Route path="/fertilizer-guide" element={<FertilizerGuidePage />} />
+          <Route path="/seasonal-tips" element={<SeasonalTipsPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/order-confirmation/:id" element={<OrderConfirmationPage />} />
+          <Route path="/dashboard" element={<CustomerDashboard />} />
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        {!isAdmin && <Footer />}
+      </div>
+      {!isAdmin && <MobileBottomNav />}
       {!isAdmin && <WhatsAppButton />}
       {!isAdmin && <AIChatWidget />}
     </>
