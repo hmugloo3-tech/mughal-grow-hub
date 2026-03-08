@@ -1,1 +1,10 @@
 project_id = "mlefvdiswjtprivsfrkb"
+
+[functions.farm-chat]
+verify_jwt = false
+
+[functions.order-notification]
+verify_jwt = false
+
+[functions.detect-disease]
+verify_jwt = false
