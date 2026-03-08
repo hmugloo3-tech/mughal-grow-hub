@@ -41,6 +41,7 @@ export default function AdminDashboard() {
             { id: "products" as Tab, label: "Products", icon: Package },
             { id: "orders" as Tab, label: "Orders", icon: ShoppingCart },
             { id: "customers" as Tab, label: "Customers", icon: Users },
+            { id: "coupons" as Tab, label: "Coupons", icon: Tag },
             { id: "delivery" as Tab, label: "Delivery", icon: Truck },
             { id: "blog" as Tab, label: "Blog", icon: FileText },
           ]).map((t) => (
