@@ -105,7 +105,7 @@ export default function AIChatWidget() {
       return;
     }
 
-    const recognition = new SpeechRecognition();
+    const recognition = new SR();
     recognition.continuous = false;
     recognition.interimResults = true;
     recognition.lang = "en-IN";
