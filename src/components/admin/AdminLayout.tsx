@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import ThemeToggle from "@/components/ThemeToggle";
 import {
   BarChart3, Package, ShoppingCart, Users, Tag, Truck, FileText,
-  LogOut, Menu, X, ChevronLeft, Boxes, LayoutDashboard, Bell, MessageSquare
+  LogOut, Menu, X, ChevronLeft, Boxes, LayoutDashboard, Bell, MessageSquare, Star
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 
