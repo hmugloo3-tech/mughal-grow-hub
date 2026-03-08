@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, memo } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ShieldCheck, Leaf, Award, Truck, Star, ArrowRight, Lightbulb, Users, TrendingUp, ShoppingCart, RefreshCw, Microscope, Bug, FlaskConical, CalendarDays, ScanLine } from "lucide-react";
@@ -44,7 +44,41 @@ export default function HomePage() {
   const heroY = useTransform(scrollY, [0, 600], [0, 200]);
   const heroScale = useTransform(scrollY, [0, 600], [1, 1.15]);
 
-  // Pull-to-refresh state
+  // Video reliability: force play on visibility and handle buffering
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoFailed, setVideoFailed] = useState(false);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const tryPlay = () => {
+      video.play().catch(() => setVideoFailed(true));
+    };
+
+    // Retry on stall/pause
+    const onStalled = () => {
+      video.load();
+      tryPlay();
+    };
+
+    video.addEventListener('stalled', onStalled);
+    video.addEventListener('waiting', onStalled);
+
+    // Also use IntersectionObserver to play when visible
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) tryPlay(); },
+      { threshold: 0.25 }
+    );
+    observer.observe(video);
+
+    return () => {
+      video.removeEventListener('stalled', onStalled);
+      video.removeEventListener('waiting', onStalled);
+      observer.disconnect();
+    };
+  }, []);
+
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
   const touchStartY = useRef(0);
@@ -95,18 +129,23 @@ export default function HomePage() {
           className="absolute inset-0"
           style={{ y: heroY, scale: heroScale }}
         >
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            poster={heroPoster}
-            className="w-full h-full object-cover"
-          >
-            <source src="/hero-video.mp4" type="video/mp4" />
+          {!videoFailed ? (
+            <video
+              ref={videoRef}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              poster={heroPoster}
+              className="w-full h-full object-cover"
+              onError={() => setVideoFailed(true)}
+            >
+              <source src="/hero-video.mp4" type="video/mp4" />
+            </video>
+          ) : (
             <img src={heroPoster} alt="Agricultural farmland in Kashmir valley" className="w-full h-full object-cover" />
-          </video>
+          )}
           <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 via-foreground/65 to-foreground/30 md:to-foreground/10" />
         </motion.div>
         <div className="container-custom relative z-10 py-24 md:py-32">
