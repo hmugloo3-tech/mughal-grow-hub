@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, memo, useMemo } from "react";
+import { useState, useEffect, useCallback, useRef, memo } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -51,6 +51,8 @@ export default function HomePage() {
   const [videoFailed, setVideoFailed] = useState(false);
 
   useEffect(() => {
+    if (isMobile) return;
+
     const video = videoRef.current;
     if (!video) return;
 
@@ -58,28 +60,34 @@ export default function HomePage() {
       video.play().catch(() => setVideoFailed(true));
     };
 
-    // Retry on stall/pause
-    const onStalled = () => {
-      video.load();
-      tryPlay();
-    };
-
-    video.addEventListener('stalled', onStalled);
-    video.addEventListener('waiting', onStalled);
-
-    // Also use IntersectionObserver to play when visible
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) tryPlay(); },
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          tryPlay();
+        } else {
+          video.pause();
+        }
+      },
       { threshold: 0.25 }
     );
+
     observer.observe(video);
 
-    return () => {
-      video.removeEventListener('stalled', onStalled);
-      video.removeEventListener('waiting', onStalled);
-      observer.disconnect();
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        video.pause();
+      } else {
+        tryPlay();
+      }
     };
-  }, []);
+
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, [isMobile]);
 
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
