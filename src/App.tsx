@@ -51,6 +51,7 @@ function AppContent() {
           <Route path="/pest-guide" element={<PestGuidePage />} />
           <Route path="/fertilizer-guide" element={<FertilizerGuidePage />} />
           <Route path="/seasonal-tips" element={<SeasonalTipsPage />} />
+          <Route path="/disease-detector" element={<CropDiseaseDetectorPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/auth" element={<AuthPage />} />
