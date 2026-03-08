@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/hooks/useCart";
 import { useToast } from "@/hooks/use-toast";
 import { categories } from "@/data/siteData";
+import ProductReviews from "@/components/ProductReviews";
 import productPesticide from "@/assets/product-pesticide.jpg";
 import productFertilizer from "@/assets/product-fertilizer.jpg";
 import productSeeds from "@/assets/product-seeds.jpg";
