@@ -322,6 +322,18 @@ export default function HomePage() {
                 iconColor: "text-primary",
               },
               {
+                icon: ScanLine,
+                title: "Disease Detector",
+                subtitle: "AI Leaf Scanner",
+                desc: "Upload a photo of any crop leaf and instantly detect diseases with AI. Get treatment advice, pesticide dosage, and organic alternatives.",
+                features: ["Photo-based diagnosis", "Treatment plans", "Severity assessment"],
+                link: "/disease-detector",
+                cta: "Scan a Leaf",
+                accent: "from-orange-500/15 to-orange-500/5",
+                iconBg: "bg-orange-500/15",
+                iconColor: "text-orange-500",
+              },
+              {
                 icon: Bug,
                 title: "Pest Guide",
                 subtitle: "Identification & Treatment",
