@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ShoppingCart, Phone } from "lucide-react";
+import { Menu, X, ShoppingCart, Phone, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCart } from "@/hooks/useCart";
+import { useAuth } from "@/hooks/useAuth";
 import logo from "@/assets/logo.png";
 
 const navLinks = [
@@ -16,6 +18,8 @@ const navLinks = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const { totalItems } = useCart();
+  const { user, isAdmin } = useAuth();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-border/50">
@@ -46,16 +50,36 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-2">
-          <a
-            href="https://wa.me/916006561732"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden md:inline-flex"
-          >
+          {/* Cart */}
+          <Link to="/cart" className="relative p-2 rounded-lg hover:bg-accent transition-colors">
+            <ShoppingCart className="h-5 w-5 text-foreground" />
+            {totalItems > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-secondary text-secondary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
+                {totalItems}
+              </span>
+            )}
+          </Link>
+
+          {/* User menu */}
+          {user ? (
+            <Link to={isAdmin ? "/admin" : "/dashboard"} className="p-2 rounded-lg hover:bg-accent transition-colors">
+              <User className="h-5 w-5 text-primary" />
+            </Link>
+          ) : (
+            <Link to="/auth">
+              <Button variant="outline" size="sm" className="hidden md:inline-flex gap-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+                <User className="h-4 w-4" /> Sign In
+              </Button>
+            </Link>
+          )}
+
+          {/* WhatsApp */}
+          <a href="https://wa.me/916006561732" target="_blank" rel="noopener noreferrer" className="hidden md:inline-flex">
             <Button variant="outline" size="sm" className="gap-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground">
               <Phone className="h-4 w-4" /> WhatsApp
             </Button>
           </a>
+
           <button className="lg:hidden p-2" onClick={() => setOpen(!open)}>
             {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -74,19 +98,23 @@ export default function Navbar() {
           >
             <div className="container-custom py-4 flex flex-col gap-1">
               {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  onClick={() => setOpen(false)}
+                <Link key={link.path} to={link.path} onClick={() => setOpen(false)}
                   className={`px-4 py-3 rounded-lg text-sm font-medium transition-all ${
-                    location.pathname === link.path
-                      ? "bg-primary text-primary-foreground"
-                      : "text-foreground hover:bg-accent"
-                  }`}
-                >
+                    location.pathname === link.path ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-accent"
+                  }`}>
                   {link.name}
                 </Link>
               ))}
+              {!user && (
+                <Link to="/auth" onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-accent">
+                  Sign In / Sign Up
+                </Link>
+              )}
+              {user && (
+                <Link to={isAdmin ? "/admin" : "/dashboard"} onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm font-medium text-primary hover:bg-accent">
+                  {isAdmin ? "Admin Dashboard" : "My Dashboard"}
+                </Link>
+              )}
               <a href="https://wa.me/916006561732" target="_blank" rel="noopener noreferrer" className="mt-2">
                 <Button className="w-full gap-2 bg-primary text-primary-foreground">
                   <Phone className="h-4 w-4" /> WhatsApp Order

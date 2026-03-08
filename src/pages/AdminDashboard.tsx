@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import {
-  Package, ShoppingCart, FileText, BarChart3, LogOut, Plus, Pencil, Trash2, X, Save
+  Package, ShoppingCart, FileText, BarChart3, LogOut, Plus, Pencil, Trash2, X, Save, Truck, Settings, MapPin
 } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -15,7 +15,7 @@ type Product = Database["public"]["Tables"]["products"]["Row"];
 type Order = Database["public"]["Tables"]["orders"]["Row"];
 type BlogPost = Database["public"]["Tables"]["blog_posts"]["Row"];
 
-type Tab = "overview" | "products" | "orders" | "blog";
+type Tab = "overview" | "products" | "orders" | "blog" | "delivery";
 
 export default function AdminDashboard() {
   const { user, isAdmin, loading, signOut } = useAuth();
@@ -40,7 +40,8 @@ export default function AdminDashboard() {
             { id: "overview" as Tab, label: "Overview", icon: BarChart3 },
             { id: "products" as Tab, label: "Products", icon: Package },
             { id: "orders" as Tab, label: "Orders", icon: ShoppingCart },
-            { id: "blog" as Tab, label: "Blog Posts", icon: FileText },
+            { id: "delivery" as Tab, label: "Delivery", icon: Truck },
+            { id: "blog" as Tab, label: "Blog", icon: FileText },
           ]).map((t) => (
             <Button key={t.id} variant={tab === t.id ? "default" : "outline"} size="sm" onClick={() => setTab(t.id)}
               className={tab === t.id ? "bg-primary text-primary-foreground" : "border-primary text-primary hover:bg-primary hover:text-primary-foreground"}
@@ -53,6 +54,7 @@ export default function AdminDashboard() {
         {tab === "overview" && <OverviewTab />}
         {tab === "products" && <ProductsTab />}
         {tab === "orders" && <OrdersTab />}
+        {tab === "delivery" && <DeliverySettingsTab />}
         {tab === "blog" && <BlogTab />}
       </div>
     </div>
@@ -210,6 +212,7 @@ function ProductsTab() {
 
 function OrdersTab() {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [trackingInput, setTrackingInput] = useState<Record<string, string>>({});
   const { toast } = useToast();
 
   const load = async () => {
@@ -225,33 +228,162 @@ function OrdersTab() {
     load();
   };
 
+  const addTrackingNote = async (id: string) => {
+    const note = trackingInput[id]?.trim();
+    if (!note) return;
+    const order = orders.find((o) => o.id === id);
+    const existing = (order?.tracking_notes || []) as string[];
+    const timestamp = new Date().toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+    await supabase.from("orders").update({ tracking_notes: [...existing, `[${timestamp}] ${note}`] }).eq("id", id);
+    setTrackingInput((prev) => ({ ...prev, [id]: "" }));
+    toast({ title: "Tracking note added" });
+    load();
+  };
+
+  const statusColors: Record<string, string> = {
+    pending: "bg-secondary/20 text-secondary-foreground", confirmed: "bg-primary/20 text-primary",
+    shipped: "bg-leaf/20 text-leaf", delivered: "bg-primary/20 text-primary", cancelled: "bg-destructive/20 text-destructive",
+  };
+
   return (
     <div>
-      <h2 className="text-lg font-semibold text-foreground mb-4">Customer Orders</h2>
+      <h2 className="text-lg font-semibold text-foreground mb-4">Customer Orders ({orders.length})</h2>
       {orders.length === 0 && <p className="text-muted-foreground text-center py-8">No orders yet.</p>}
-      {orders.map((o) => (
-        <div key={o.id} className="glass-card rounded-lg p-4 mb-3">
-          <div className="flex flex-wrap justify-between items-start gap-2">
-            <div>
-              <p className="font-semibold text-foreground">{o.customer_name}</p>
-              <p className="text-sm text-muted-foreground">{o.customer_phone}</p>
-              <p className="text-sm text-muted-foreground">{new Date(o.created_at).toLocaleDateString()}</p>
+      {orders.map((o) => {
+        const items = o.product_list as any[];
+        const addr = (o as any).delivery_address_snapshot as any;
+        return (
+          <div key={o.id} className="glass-card rounded-xl p-5 mb-4">
+            <div className="flex flex-wrap justify-between items-start gap-3 mb-3">
+              <div>
+                <p className="text-xs font-mono text-muted-foreground">#{o.id.slice(0, 8).toUpperCase()}</p>
+                <p className="font-semibold text-foreground">{o.customer_name || "Guest"}</p>
+                <p className="text-sm text-muted-foreground">{o.customer_phone || "N/A"}</p>
+                <p className="text-xs text-muted-foreground">{new Date(o.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}</p>
+              </div>
+              <div className="text-right">
+                <p className="font-bold text-primary text-lg">₹{o.total_price}</p>
+                <select value={o.status} onChange={(e) => updateStatus(o.id, e.target.value)}
+                  className={`mt-1 text-xs rounded-full font-semibold px-3 py-1 border-0 ${statusColors[o.status] || ""}`}>
+                  <option value="pending">⏳ Pending</option>
+                  <option value="confirmed">✅ Confirmed</option>
+                  <option value="shipped">🚚 Shipped</option>
+                  <option value="delivered">📦 Delivered</option>
+                  <option value="cancelled">❌ Cancelled</option>
+                </select>
+              </div>
             </div>
-            <div className="text-right">
-              <p className="font-bold text-primary">₹{o.total_price}</p>
-              <select value={o.status} onChange={(e) => updateStatus(o.id, e.target.value)}
-                className="mt-1 text-xs rounded border border-input bg-background px-2 py-1">
-                <option value="pending">Pending</option>
-                <option value="confirmed">Confirmed</option>
-                <option value="shipped">Shipped</option>
-                <option value="delivered">Delivered</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
+
+            {/* Items */}
+            <div className="border-t border-border pt-3 mb-3">
+              {Array.isArray(items) && items.map((item: any, i: number) => (
+                <div key={i} className="flex justify-between text-sm py-0.5">
+                  <span className="text-muted-foreground">{item.name} × {item.quantity}</span>
+                  <span className="text-foreground">₹{item.price * item.quantity}</span>
+                </div>
+              ))}
+              {(o as any).delivery_charges > 0 && (
+                <div className="flex justify-between text-sm py-0.5">
+                  <span className="text-muted-foreground">Delivery</span>
+                  <span className="text-foreground">₹{(o as any).delivery_charges}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Address */}
+            {addr && (
+              <div className="bg-accent rounded-lg p-3 mb-3 flex items-start gap-2">
+                <MapPin className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                <p className="text-xs text-muted-foreground">
+                  {addr.full_name}, {addr.phone}<br />
+                  {addr.address_line1}{addr.village ? `, ${addr.village}` : ""}, {addr.district} - {addr.pincode}
+                </p>
+              </div>
+            )}
+
+            {/* Payment & Tracking */}
+            <div className="flex flex-wrap gap-3 text-xs text-muted-foreground mb-3">
+              <span>💳 {(o as any).payment_method?.toUpperCase() || "COD"}</span>
+              <span>💰 Payment: {(o as any).payment_status || "pending"}</span>
+              {(o as any).estimated_delivery && <span>📅 Est: {new Date((o as any).estimated_delivery).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</span>}
+            </div>
+
+            {/* Tracking notes */}
+            {(o as any).tracking_notes && ((o as any).tracking_notes as string[]).length > 0 && (
+              <div className="bg-accent rounded-lg p-3 mb-3">
+                <p className="text-xs font-semibold text-foreground mb-1">Tracking Updates</p>
+                {((o as any).tracking_notes as string[]).map((note, i) => (
+                  <p key={i} className="text-xs text-muted-foreground">• {note}</p>
+                ))}
+              </div>
+            )}
+
+            {/* Add tracking note */}
+            <div className="flex gap-2">
+              <Input
+                placeholder="Add tracking note..."
+                value={trackingInput[o.id] || ""}
+                onChange={(e) => setTrackingInput((prev) => ({ ...prev, [o.id]: e.target.value }))}
+                className="text-sm h-8"
+                maxLength={200}
+              />
+              <Button size="sm" onClick={() => addTrackingNote(o.id)} className="bg-primary text-primary-foreground h-8 text-xs">Add</Button>
             </div>
           </div>
-          {o.notes && <p className="text-sm text-muted-foreground mt-2">Notes: {o.notes}</p>}
+        );
+      })}
+    </div>
+  );
+}
+
+function DeliverySettingsTab() {
+  const [settings, setSettings] = useState({ base_charge: 50, free_delivery_above: 1000, estimated_days_local: 2, estimated_days_district: 4, is_delivery_active: true, id: "" });
+  const { toast } = useToast();
+
+  useEffect(() => {
+    supabase.from("delivery_settings").select("*").limit(1).single().then(({ data }) => {
+      if (data) setSettings(data as any);
+    });
+  }, []);
+
+  const save = async () => {
+    await supabase.from("delivery_settings").update({
+      base_charge: settings.base_charge,
+      free_delivery_above: settings.free_delivery_above,
+      estimated_days_local: settings.estimated_days_local,
+      estimated_days_district: settings.estimated_days_district,
+      is_delivery_active: settings.is_delivery_active,
+    }).eq("id", settings.id);
+    toast({ title: "Delivery settings saved!" });
+  };
+
+  return (
+    <div className="max-w-lg">
+      <h2 className="text-lg font-semibold text-foreground mb-4">Delivery Settings</h2>
+      <div className="glass-card rounded-xl p-6 space-y-4">
+        <div>
+          <label className="text-sm font-medium block mb-1">Base Delivery Charge (₹)</label>
+          <Input type="number" value={settings.base_charge} onChange={(e) => setSettings({ ...settings, base_charge: Number(e.target.value) })} min={0} />
         </div>
-      ))}
+        <div>
+          <label className="text-sm font-medium block mb-1">Free Delivery Above (₹)</label>
+          <Input type="number" value={settings.free_delivery_above} onChange={(e) => setSettings({ ...settings, free_delivery_above: Number(e.target.value) })} min={0} />
+          <p className="text-xs text-muted-foreground mt-1">Orders above this amount get free delivery</p>
+        </div>
+        <div>
+          <label className="text-sm font-medium block mb-1">Est. Delivery Days (Local/Anantnag)</label>
+          <Input type="number" value={settings.estimated_days_local} onChange={(e) => setSettings({ ...settings, estimated_days_local: Number(e.target.value) })} min={1} />
+        </div>
+        <div>
+          <label className="text-sm font-medium block mb-1">Est. Delivery Days (Other Districts)</label>
+          <Input type="number" value={settings.estimated_days_district} onChange={(e) => setSettings({ ...settings, estimated_days_district: Number(e.target.value) })} min={1} />
+        </div>
+        <label className="flex items-center gap-2">
+          <input type="checkbox" checked={settings.is_delivery_active} onChange={(e) => setSettings({ ...settings, is_delivery_active: e.target.checked })} />
+          <span className="text-sm">Delivery service active</span>
+        </label>
+        <Button onClick={save} className="w-full bg-primary text-primary-foreground gap-2"><Save className="h-4 w-4" /> Save Settings</Button>
+      </div>
     </div>
   );
 }
