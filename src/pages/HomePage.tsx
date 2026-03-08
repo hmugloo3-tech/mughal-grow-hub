@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ShieldCheck, Leaf, Award, Truck, Star, ArrowRight, Lightbulb, Users, TrendingUp, ShoppingCart, RefreshCw } from "lucide-react";
+import { ShieldCheck, Leaf, Award, Truck, Star, ArrowRight, Lightbulb, Users, TrendingUp, ShoppingCart, RefreshCw, Microscope, Bug, FlaskConical, CalendarDays } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -296,25 +296,96 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Tips Preview */}
-      <section className="section-padding" aria-label="Agriculture Tips">
+      {/* Farmer Advisory Hub */}
+      <section className="section-padding bg-accent/20" aria-label="Farmer Advisory Hub">
         <div className="container-custom">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Agriculture Tips</h2>
-            <p className="text-muted-foreground">Helpful knowledge for better farming practices.</p>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-center mb-4">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-3 tracking-wide uppercase">
+              🧑‍🌾 Advisory Platform
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Farmer Resource Center</h2>
+            <p className="text-muted-foreground max-w-xl mx-auto">Expert agricultural guidance tailored for Kashmir's climate, crops, and farming practices.</p>
           </motion.div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {blogPosts.map((post, i) => (
-              <motion.div key={post.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
-                <Link to="/blog" className="glass-card-hover rounded-xl overflow-hidden block group">
-                  <div className="aspect-video overflow-hidden bg-muted">
-                    <img src={categoryImages[post.category === "Pest Control" ? "pesticides" : post.category === "Fertilizers" ? "fertilizers" : post.category === "Crop Guide" ? "seeds" : "growth-promoters"]}
-                      alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" width={400} height={225} />
-                  </div>
-                  <div className="p-5">
-                    <span className="text-xs font-medium text-secondary">{post.category}</span>
-                    <h3 className="font-semibold text-foreground mt-1 mb-2 text-sm line-clamp-2">{post.title}</h3>
-                    <p className="text-xs text-muted-foreground line-clamp-2">{post.excerpt}</p>
+
+          <div className="grid md:grid-cols-2 gap-5 mt-10">
+            {([
+              {
+                icon: Microscope,
+                title: "Crop Advisor",
+                subtitle: "AI-Powered Guidance",
+                desc: "Get personalized crop recommendations, disease diagnosis, and best practices based on Kashmir's soil and climate conditions.",
+                features: ["Crop selection help", "Disease identification", "Yield optimization tips"],
+                link: "/crop-advisor",
+                cta: "Ask Crop Expert",
+                accent: "from-primary/15 to-primary/5",
+                iconBg: "bg-primary/15",
+                iconColor: "text-primary",
+              },
+              {
+                icon: Bug,
+                title: "Pest Guide",
+                subtitle: "Identification & Treatment",
+                desc: "Identify common pests and diseases in Kashmir crops with detailed treatment protocols and preventive spray schedules.",
+                features: ["Visual pest identification", "Spray schedules", "Organic alternatives"],
+                link: "/pest-guide",
+                cta: "Identify Pests",
+                accent: "from-destructive/10 to-destructive/5",
+                iconBg: "bg-destructive/15",
+                iconColor: "text-destructive",
+              },
+              {
+                icon: FlaskConical,
+                title: "Fertilizer Guide",
+                subtitle: "Dosage & Application",
+                desc: "Complete guide to using Urea, DAP, NPK, Potash, and organic fertilizers with correct dosage, timing, and precautions.",
+                features: ["NPK ratios explained", "Application methods", "Soil health tips"],
+                link: "/fertilizer-guide",
+                cta: "View Guide",
+                accent: "from-secondary/15 to-secondary/5",
+                iconBg: "bg-secondary/15",
+                iconColor: "text-secondary",
+              },
+              {
+                icon: CalendarDays,
+                title: "Seasonal Tips",
+                subtitle: "Kashmir Farming Calendar",
+                desc: "Month-by-month farming guide covering Spring (Sonth) to Winter (Wandh) with crop schedules, spray timing, and harvest planning.",
+                features: ["Season-wise crop plan", "Spray & fertilizer schedule", "Harvest timing"],
+                link: "/seasonal-tips",
+                cta: "View Calendar",
+                accent: "from-leaf/15 to-leaf/5",
+                iconBg: "bg-leaf/15",
+                iconColor: "text-leaf",
+              },
+            ] as const).map((module, i) => (
+              <motion.div key={module.title} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+                <Link to={module.link} className="block h-full">
+                  <div className={`relative h-full rounded-2xl border border-border bg-gradient-to-br ${module.accent} p-6 md:p-8 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group`}>
+                    {/* Header */}
+                    <div className="flex items-start gap-4 mb-4">
+                      <div className={`flex-shrink-0 w-12 h-12 rounded-xl ${module.iconBg} flex items-center justify-center`}>
+                        <module.icon className={`h-6 w-6 ${module.iconColor}`} />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-foreground">{module.title}</h3>
+                        <p className="text-xs font-medium text-muted-foreground">{module.subtitle}</p>
+                      </div>
+                    </div>
+
+                    {/* Description */}
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-5">{module.desc}</p>
+
+                    {/* Feature pills */}
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {module.features.map(f => (
+                        <span key={f} className="text-[11px] font-medium bg-background/80 text-foreground/70 border border-border px-2.5 py-1 rounded-full">{f}</span>
+                      ))}
+                    </div>
+
+                    {/* CTA */}
+                    <div className="flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all">
+                      {module.cta} <ArrowRight className="h-4 w-4" />
+                    </div>
                   </div>
                 </Link>
               </motion.div>
