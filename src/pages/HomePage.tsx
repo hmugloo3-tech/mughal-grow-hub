@@ -63,7 +63,7 @@ export default function HomePage() {
                 </Button>
               </Link>
               <Link to="/contact">
-                <Button size="lg" variant="outline" className="border-background/40 text-background hover:bg-background/10 font-semibold text-base px-8">
+                <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground bg-primary-foreground/10 hover:bg-primary-foreground/20 font-semibold text-base px-8">
                   Contact Us
                 </Button>
               </Link>
