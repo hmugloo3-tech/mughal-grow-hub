@@ -1045,3 +1045,117 @@ function MessagesTab() {
   );
 }
 
+/* ─── REVIEWS MODERATION ─── */
+function ReviewsTab() {
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const load = async () => {
+    setLoading(true);
+    const { data } = await supabase
+      .from("product_reviews")
+      .select("id, rating, review_text, is_approved, created_at, user_id, product_id")
+      .order("created_at", { ascending: false });
+
+    if (data) {
+      // Enrich with product names and user names
+      const productIds = [...new Set(data.map(r => r.product_id))];
+      const userIds = [...new Set(data.map(r => r.user_id))];
+
+      const [{ data: products }, { data: profiles }] = await Promise.all([
+        supabase.from("products").select("id, name").in("id", productIds),
+        supabase.from("profiles").select("user_id, display_name").in("user_id", userIds),
+      ]);
+
+      const productMap = new Map((products || []).map(p => [p.id, p.name]));
+      const profileMap = new Map((profiles || []).map(p => [p.user_id, p.display_name]));
+
+      setReviews(data.map(r => ({
+        ...r,
+        product_name: productMap.get(r.product_id) || "Unknown",
+        user_name: profileMap.get(r.user_id) || "Customer",
+      })));
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const toggleApproval = async (id: string, current: boolean) => {
+    await supabase.from("product_reviews").update({ is_approved: !current }).eq("id", id);
+    setReviews(prev => prev.map(r => r.id === id ? { ...r, is_approved: !current } : r));
+  };
+
+  const remove = async (id: string) => {
+    await supabase.from("product_reviews").delete().eq("id", id);
+    setReviews(prev => prev.filter(r => r.id !== id));
+  };
+
+  if (loading) return <div className="flex justify-center py-12"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" /></div>;
+
+  return (
+    <div>
+      <h2 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+        <Star className="h-5 w-5 text-primary" /> Review Moderation
+        <span className="text-sm font-normal text-muted-foreground ml-2">{reviews.length} total</span>
+      </h2>
+
+      {reviews.length === 0 ? (
+        <div className="text-center py-12 text-muted-foreground">
+          <Star className="h-12 w-12 mx-auto mb-3 opacity-50" />
+          <p>No reviews yet</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {reviews.map((review) => (
+            <div
+              key={review.id}
+              className={`glass-card rounded-xl p-4 border-l-4 ${
+                review.is_approved ? "border-l-primary" : "border-l-secondary"
+              }`}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <span className="font-semibold text-foreground text-sm">{review.user_name}</span>
+                    <span className="text-xs text-muted-foreground">on</span>
+                    <span className="font-medium text-primary text-sm">{review.product_name}</span>
+                    {!review.is_approved && (
+                      <span className="text-[10px] bg-secondary text-secondary-foreground px-1.5 py-0.5 rounded-full font-semibold">HIDDEN</span>
+                    )}
+                  </div>
+                  <div className="flex gap-0.5 mb-1">
+                    {[1, 2, 3, 4, 5].map(s => (
+                      <Star key={s} className={`h-3.5 w-3.5 ${s <= review.rating ? "text-secondary fill-secondary" : "text-muted-foreground/30"}`} />
+                    ))}
+                  </div>
+                  {review.review_text && (
+                    <p className="text-sm text-muted-foreground mt-1">{review.review_text}</p>
+                  )}
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {new Date(review.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                  </p>
+                </div>
+                <div className="flex gap-1 shrink-0">
+                  <button
+                    onClick={() => toggleApproval(review.id, review.is_approved)}
+                    className="p-2 rounded-lg hover:bg-accent transition-colors"
+                    title={review.is_approved ? "Hide review" : "Approve review"}
+                  >
+                    {review.is_approved
+                      ? <ThumbsDown className="h-4 w-4 text-secondary" />
+                      : <ThumbsUp className="h-4 w-4 text-primary" />
+                    }
+                  </button>
+                  <button onClick={() => remove(review.id)} className="p-2 rounded-lg hover:bg-destructive/10 transition-colors">
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
