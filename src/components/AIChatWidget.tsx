@@ -551,7 +551,7 @@ export default function AIChatWidget() {
                 />
 
                 {/* Voice button */}
-                {SpeechRecognition && (
+                {getSpeechRecognition() && (
                   <button
                     type="button"
                     onClick={toggleVoice}
