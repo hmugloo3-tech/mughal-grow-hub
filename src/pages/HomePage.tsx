@@ -88,7 +88,10 @@ export default function HomePage() {
 
       {/* Hero */}
       <section className="relative min-h-[85vh] md:min-h-[90vh] flex items-center overflow-hidden">
-        <div className="absolute inset-0">
+        <motion.div
+          className="absolute inset-0"
+          style={{ y: useTransform(useScroll().scrollY, [0, 600], [0, 200]), scale: useTransform(useScroll().scrollY, [0, 600], [1, 1.15]) }}
+        >
           <video
             autoPlay
             muted
@@ -99,11 +102,10 @@ export default function HomePage() {
             className="w-full h-full object-cover"
           >
             <source src="/hero-video.mp4" type="video/mp4" />
-            {/* Fallback poster image if video can't play */}
             <img src={heroPoster} alt="Agricultural farmland in Kashmir valley" className="w-full h-full object-cover" />
           </video>
           <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 via-foreground/65 to-foreground/30 md:to-foreground/10" />
-        </div>
+        </motion.div>
         <div className="container-custom relative z-10 py-24 md:py-32">
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-2xl">
             <span className="inline-block px-4 py-1.5 rounded-full bg-secondary text-secondary-foreground text-xs md:text-sm font-semibold mb-4 md:mb-6">
