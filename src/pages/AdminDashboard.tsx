@@ -54,6 +54,7 @@ export default function AdminDashboard() {
         {tab === "overview" && <OverviewTab />}
         {tab === "products" && <ProductsTab />}
         {tab === "orders" && <OrdersTab />}
+        {tab === "delivery" && <DeliverySettingsTab />}
         {tab === "blog" && <BlogTab />}
       </div>
     </div>
