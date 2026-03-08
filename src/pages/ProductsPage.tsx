@@ -66,11 +66,18 @@ export default function ProductsPage() {
   useEffect(() => {
     supabase.from("products").select("*").eq("is_active", true).order("created_at", { ascending: false })
       .then(({ data }) => {
-        setProducts(data || []);
-        if (data && data.length > 0) {
-          const maxP = Math.max(...data.map(p => p.price));
+        const items = data || [];
+        setProducts(items);
+        if (items.length > 0) {
+          const maxP = Math.max(...items.map(p => p.price));
           setPriceRange([0, Math.ceil(maxP / 100) * 100]);
         }
+        // Preload all product images for instant display
+        items.forEach((p) => {
+          const src = p.image_url || fallbackImages[p.category] || productPesticide;
+          const img = new Image();
+          img.src = src;
+        });
         setLoading(false);
       });
   }, []);
