@@ -206,6 +206,54 @@ export type Database = {
         }
         Relationships: []
       }
+      disease_detections: {
+        Row: {
+          causes: string | null
+          confidence: number | null
+          created_at: string
+          crop_name: string | null
+          disease_name: string | null
+          id: string
+          image_url: string | null
+          is_healthy: boolean
+          safety_tips: string[] | null
+          severity: string | null
+          symptoms: string | null
+          treatment: Json | null
+          user_id: string
+        }
+        Insert: {
+          causes?: string | null
+          confidence?: number | null
+          created_at?: string
+          crop_name?: string | null
+          disease_name?: string | null
+          id?: string
+          image_url?: string | null
+          is_healthy?: boolean
+          safety_tips?: string[] | null
+          severity?: string | null
+          symptoms?: string | null
+          treatment?: Json | null
+          user_id: string
+        }
+        Update: {
+          causes?: string | null
+          confidence?: number | null
+          created_at?: string
+          crop_name?: string | null
+          disease_name?: string | null
+          id?: string
+          image_url?: string | null
+          is_healthy?: boolean
+          safety_tips?: string[] | null
+          severity?: string | null
+          symptoms?: string | null
+          treatment?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           created_at: string
