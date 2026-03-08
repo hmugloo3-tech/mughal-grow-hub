@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 
-type Tab = "overview" | "products" | "orders" | "customers" | "coupons" | "delivery" | "blog" | "inventory";
+type Tab = "overview" | "products" | "orders" | "customers" | "coupons" | "delivery" | "blog" | "inventory" | "messages";
 
 const sidebarItems: { id: Tab; label: string; icon: any }[] = [
   { id: "overview", label: "Dashboard", icon: LayoutDashboard },
