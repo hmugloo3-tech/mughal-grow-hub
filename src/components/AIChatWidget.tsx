@@ -150,7 +150,7 @@ export default function AIChatWidget() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-24 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-96 max-h-[70vh] flex flex-col glass-card rounded-2xl border border-border/50 shadow-2xl overflow-hidden"
+            className="fixed bottom-20 lg:bottom-24 right-2 sm:right-4 lg:right-6 z-50 w-[calc(100vw-1rem)] sm:w-96 max-h-[60vh] lg:max-h-[70vh] flex flex-col glass-card rounded-2xl border border-border/50 shadow-2xl overflow-hidden"
           >
             {/* Header */}
             <div className="bg-primary text-primary-foreground px-4 py-3 flex items-center justify-between shrink-0">
