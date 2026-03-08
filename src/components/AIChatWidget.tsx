@@ -1,13 +1,17 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, X, Send, Bot, User, Leaf, Trash2, Sparkles, ArrowDown } from "lucide-react";
+import { MessageCircle, X, Send, Bot, User, Leaf, Trash2, Sparkles, ArrowDown, Mic, MicOff, ImagePlus, Copy, Check, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ReactMarkdown from "react-markdown";
+import { toast } from "sonner";
 
 interface Msg {
   role: "user" | "assistant";
   content: string;
   timestamp?: Date;
+  imageBase64?: string;
+  mimeType?: string;
+  imagePreview?: string;
 }
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/farm-chat`;
@@ -51,6 +55,9 @@ const quickCategories = [
   },
 ];
 
+// Web Speech API helper
+const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
 export default function AIChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([]);
@@ -58,8 +65,13 @@ export default function AIChatWidget() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [pendingImage, setPendingImage] = useState<{ base64: string; mimeType: string; preview: string } | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const recognitionRef = useRef<any>(null);
 
   const scrollToBottom = useCallback(() => {
     if (scrollRef.current) scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -77,12 +89,85 @@ export default function AIChatWidget() {
     setShowScrollBtn(scrollHeight - scrollTop - clientHeight > 100);
   }, []);
 
+  // Voice input
+  const toggleVoice = useCallback(() => {
+    if (!SpeechRecognition) {
+      toast.error("Voice input not supported in this browser");
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.lang = "en-IN";
+
+    recognition.onresult = (event: any) => {
+      const transcript = Array.from(event.results)
+        .map((result: any) => result[0].transcript)
+        .join("");
+      setInput(transcript);
+    };
+
+    recognition.onend = () => setIsListening(false);
+    recognition.onerror = () => {
+      setIsListening(false);
+      toast.error("Voice recognition failed. Please try again.");
+    };
+
+    recognitionRef.current = recognition;
+    recognition.start();
+    setIsListening(true);
+  }, [isListening]);
+
+  // Image handling
+  const handleImageSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be under 5MB");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      const base64 = dataUrl.split(",")[1];
+      setPendingImage({ base64, mimeType: file.type, preview: dataUrl });
+    };
+    reader.readAsDataURL(file);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }, []);
+
+  const removePendingImage = () => setPendingImage(null);
+
+  // Copy message
+  const copyMessage = useCallback((text: string, index: number) => {
+    navigator.clipboard.writeText(text);
+    setCopiedIndex(index);
+    setTimeout(() => setCopiedIndex(null), 2000);
+  }, []);
+
   const sendMessage = async (text: string) => {
-    if (!text.trim() || isLoading) return;
-    const userMsg: Msg = { role: "user", content: text.trim(), timestamp: new Date() };
+    if ((!text.trim() && !pendingImage) || isLoading) return;
+
+    const userMsg: Msg = {
+      role: "user",
+      content: text.trim() || (pendingImage ? "Please analyze this image" : ""),
+      timestamp: new Date(),
+      imageBase64: pendingImage?.base64,
+      mimeType: pendingImage?.mimeType,
+      imagePreview: pendingImage?.preview,
+    };
     const allMessages = [...messages, userMsg];
     setMessages(allMessages);
     setInput("");
+    setPendingImage(null);
     setSelectedCategory(null);
     setIsLoading(true);
 
@@ -95,7 +180,13 @@ export default function AIChatWidget() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: allMessages.map(m => ({ role: m.role, content: m.content })) }),
+        body: JSON.stringify({
+          messages: allMessages.map(m => ({
+            role: m.role,
+            content: m.content,
+            ...(m.imageBase64 ? { imageBase64: m.imageBase64, mimeType: m.mimeType } : {}),
+          })),
+        }),
       });
 
       if (!resp.ok || !resp.body) {
@@ -176,10 +267,14 @@ export default function AIChatWidget() {
   const clearChat = () => {
     setMessages([]);
     setSelectedCategory(null);
+    setPendingImage(null);
   };
 
   return (
     <>
+      {/* Hidden file input */}
+      <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageSelect} />
+
       {/* Floating Toggle */}
       <AnimatePresence>
         {!open && (
@@ -210,7 +305,7 @@ export default function AIChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 30, scale: 0.9 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="fixed bottom-20 lg:bottom-24 right-2 sm:right-4 lg:right-6 z-50 w-[calc(100vw-1rem)] sm:w-[400px] h-[65vh] lg:h-[70vh] max-h-[600px] flex flex-col rounded-2xl border border-border/50 shadow-2xl shadow-primary/10 overflow-hidden bg-background"
+            className="fixed bottom-20 lg:bottom-24 right-2 sm:right-4 lg:right-6 z-50 w-[calc(100vw-1rem)] sm:w-[420px] h-[70vh] lg:h-[75vh] max-h-[650px] flex flex-col rounded-2xl border border-border/50 shadow-2xl shadow-primary/10 overflow-hidden bg-background"
           >
             {/* Header */}
             <div className="bg-gradient-to-r from-primary via-primary/95 to-primary/85 text-primary-foreground px-4 py-3.5 flex items-center justify-between shrink-0 relative overflow-hidden">
@@ -220,10 +315,13 @@ export default function AIChatWidget() {
                   <Leaf className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm">Mughal Agri Assistant</h3>
+                  <h3 className="font-bold text-sm flex items-center gap-1.5">
+                    Mughal Agri Assistant
+                    <span className="text-[9px] bg-primary-foreground/20 px-1.5 py-0.5 rounded-full font-normal">PRO</span>
+                  </h3>
                   <div className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                    <p className="text-[11px] text-primary-foreground/70">AI-powered farming advisor</p>
+                    <p className="text-[11px] text-primary-foreground/70">AI-powered • Vision enabled</p>
                   </div>
                 </div>
               </div>
@@ -244,11 +342,33 @@ export default function AIChatWidget() {
               {messages.length === 0 && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="py-2">
                   <div className="text-center mb-5">
-                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 mb-3">
-                      <Bot className="h-7 w-7 text-primary" />
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/15 to-secondary/10 mb-3 relative">
+                      <Bot className="h-8 w-8 text-primary" />
+                      <motion.div
+                        className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center"
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{ repeat: Infinity, duration: 2 }}
+                      >
+                        <Sparkles className="h-3 w-3 text-white" />
+                      </motion.div>
                     </div>
                     <h4 className="font-bold text-foreground text-base">Assalamu Alaikum! 🌾</h4>
-                    <p className="text-xs text-muted-foreground mt-1 max-w-[280px] mx-auto">I'm your AI farming advisor. Ask me about crops, pesticides, fertilizers, or any agricultural question!</p>
+                    <p className="text-xs text-muted-foreground mt-1 max-w-[300px] mx-auto">
+                      I'm your AI farming advisor powered by advanced vision. Ask me anything or <strong>send a photo</strong> of your crop for instant diagnosis!
+                    </p>
+                  </div>
+
+                  {/* Feature badges */}
+                  <div className="flex justify-center gap-2 mb-4 flex-wrap">
+                    <span className="text-[10px] bg-primary/10 text-primary px-2.5 py-1 rounded-full font-medium flex items-center gap-1">
+                      <Camera className="h-3 w-3" /> Photo Analysis
+                    </span>
+                    <span className="text-[10px] bg-primary/10 text-primary px-2.5 py-1 rounded-full font-medium flex items-center gap-1">
+                      <Mic className="h-3 w-3" /> Voice Input
+                    </span>
+                    <span className="text-[10px] bg-primary/10 text-primary px-2.5 py-1 rounded-full font-medium flex items-center gap-1">
+                      <Sparkles className="h-3 w-3" /> Smart AI
+                    </span>
                   </div>
 
                   {/* Category chips */}
@@ -312,17 +432,41 @@ export default function AIChatWidget() {
                       <Bot className="h-3.5 w-3.5 text-primary" />
                     </div>
                   )}
-                  <div className={`max-w-[82%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
-                    msg.role === "user"
-                      ? "bg-gradient-to-br from-primary to-primary/85 text-primary-foreground rounded-br-md shadow-sm"
-                      : "bg-accent/70 text-foreground rounded-bl-md border border-border/30"
+                  <div className={`max-w-[82%] group relative ${
+                    msg.role === "user" ? "" : ""
                   }`}>
-                    {msg.role === "assistant" ? (
-                      <div className="prose prose-sm max-w-none dark:prose-invert [&>p]:mb-2 [&>ul]:mb-2 [&>ol]:mb-2 [&>p:last-child]:mb-0 [&>h1]:text-sm [&>h2]:text-sm [&>h3]:text-xs [&>h3]:font-bold [&>li]:text-xs [&_code]:text-xs [&_code]:bg-primary/10 [&_code]:px-1 [&_code]:rounded">
-                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    {/* Image preview for user messages */}
+                    {msg.imagePreview && (
+                      <div className="mb-1.5 rounded-xl overflow-hidden border border-border/30 max-w-[200px] ml-auto">
+                        <img src={msg.imagePreview} alt="Uploaded" className="w-full h-auto" />
                       </div>
-                    ) : (
-                      <p>{msg.content}</p>
+                    )}
+                    <div className={`rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
+                      msg.role === "user"
+                        ? "bg-gradient-to-br from-primary to-primary/85 text-primary-foreground rounded-br-md shadow-sm"
+                        : "bg-accent/70 text-foreground rounded-bl-md border border-border/30"
+                    }`}>
+                      {msg.role === "assistant" ? (
+                        <div className="prose prose-sm max-w-none dark:prose-invert [&>p]:mb-2 [&>ul]:mb-2 [&>ol]:mb-2 [&>p:last-child]:mb-0 [&>h1]:text-sm [&>h2]:text-sm [&>h3]:text-xs [&>h3]:font-bold [&>li]:text-xs [&_code]:text-xs [&_code]:bg-primary/10 [&_code]:px-1 [&_code]:rounded">
+                          <ReactMarkdown>{msg.content}</ReactMarkdown>
+                        </div>
+                      ) : (
+                        <p>{msg.content}</p>
+                      )}
+                    </div>
+
+                    {/* Copy button for assistant messages */}
+                    {msg.role === "assistant" && msg.content && !isLoading && (
+                      <button
+                        onClick={() => copyMessage(msg.content, i)}
+                        className="absolute -bottom-5 left-0 text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        {copiedIndex === i ? (
+                          <><Check className="h-3 w-3 text-green-500" /> Copied</>
+                        ) : (
+                          <><Copy className="h-3 w-3" /> Copy</>
+                        )}
+                      </button>
                     )}
                   </div>
                   {msg.role === "user" && (
@@ -339,10 +483,13 @@ export default function AIChatWidget() {
                     <Bot className="h-3.5 w-3.5 text-primary animate-pulse" />
                   </div>
                   <div className="bg-accent/70 rounded-2xl rounded-bl-md px-4 py-3 border border-border/30">
-                    <div className="flex gap-1.5">
-                      <span className="w-2 h-2 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                      <span className="w-2 h-2 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                      <span className="w-2 h-2 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                    <div className="flex items-center gap-2">
+                      <div className="flex gap-1.5">
+                        <span className="w-2 h-2 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                        <span className="w-2 h-2 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                        <span className="w-2 h-2 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                      </div>
+                      <span className="text-[10px] text-muted-foreground">Thinking...</span>
                     </div>
                   </div>
                 </motion.div>
@@ -360,24 +507,71 @@ export default function AIChatWidget() {
               </AnimatePresence>
             </div>
 
+            {/* Pending image preview */}
+            {pendingImage && (
+              <div className="px-3 pt-2 flex items-center gap-2">
+                <div className="relative inline-block">
+                  <img src={pendingImage.preview} alt="To send" className="h-14 w-14 object-cover rounded-lg border border-border" />
+                  <button
+                    onClick={removePendingImage}
+                    className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center text-[10px] font-bold hover:scale-110 transition-transform"
+                  >
+                    ×
+                  </button>
+                </div>
+                <span className="text-xs text-muted-foreground">Image attached</span>
+              </div>
+            )}
+
             {/* Input */}
             <div className="p-3 border-t border-border/50 shrink-0 bg-background/80 backdrop-blur-sm">
-              <form onSubmit={(e) => { e.preventDefault(); sendMessage(input); }} className="flex gap-2">
+              <form onSubmit={(e) => { e.preventDefault(); sendMessage(input); }} className="flex gap-1.5 items-end">
+                {/* Image upload button */}
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isLoading}
+                  className="p-2.5 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all disabled:opacity-40 shrink-0"
+                  title="Send a photo for analysis"
+                >
+                  <ImagePlus className="h-5 w-5" />
+                </button>
+
                 <input
                   ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Ask about crops, fertilizers, pests..."
-                  className="flex-1 bg-accent/50 rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:bg-background transition-all"
+                  placeholder={pendingImage ? "Add a message (optional)..." : "Ask about crops, pests, fertilizers..."}
+                  className="flex-1 bg-accent/50 rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:bg-background transition-all min-w-0"
                   maxLength={500}
                   disabled={isLoading}
                 />
-                <Button type="submit" size="sm" disabled={isLoading || !input.trim()}
-                  className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-3.5 rounded-xl h-10 w-10 shadow-md shadow-primary/20 hover:shadow-primary/40 transition-all">
+
+                {/* Voice button */}
+                {SpeechRecognition && (
+                  <button
+                    type="button"
+                    onClick={toggleVoice}
+                    disabled={isLoading}
+                    className={`p-2.5 rounded-xl transition-all shrink-0 ${
+                      isListening
+                        ? "bg-destructive/10 text-destructive animate-pulse"
+                        : "text-muted-foreground hover:text-primary hover:bg-primary/10"
+                    } disabled:opacity-40`}
+                    title={isListening ? "Stop listening" : "Voice input"}
+                  >
+                    {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+                  </button>
+                )}
+
+                <Button type="submit" size="sm" disabled={isLoading || (!input.trim() && !pendingImage)}
+                  className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-3 rounded-xl h-10 w-10 shadow-md shadow-primary/20 hover:shadow-primary/40 transition-all shrink-0">
                   <Send className="h-4 w-4" />
                 </Button>
               </form>
-              <p className="text-[9px] text-muted-foreground text-center mt-1.5">Powered by AI • For expert advice, call <a href="tel:+916006561732" className="text-primary hover:underline">6006561732</a></p>
+              <p className="text-[9px] text-muted-foreground text-center mt-1.5 opacity-60">
+                Powered by Advanced AI • Send photos for crop diagnosis
+              </p>
             </div>
           </motion.div>
         )}
