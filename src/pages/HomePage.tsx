@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, memo, useMemo } from "react";
+import { useState, useEffect, useCallback, useRef, memo } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
