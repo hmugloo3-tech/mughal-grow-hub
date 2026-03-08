@@ -175,8 +175,6 @@ export default function CheckoutPage() {
               {i < 2 && <div className={`w-4 md:w-8 h-0.5 mx-0.5 md:mx-1 ${step > s.n ? "bg-primary" : "bg-muted"}`} />}
             </div>
           ))}
-            </div>
-          ))}
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
