@@ -16,7 +16,7 @@ import productPesticide from "@/assets/product-pesticide.jpg";
 import productFertilizer from "@/assets/product-fertilizer.jpg";
 import productSeeds from "@/assets/product-seeds.jpg";
 import productGrowth from "@/assets/product-growth.jpg";
-
+import productTools from "@/assets/product-tools.jpg";
 const categoryImages: Record<string, string> = {
   pesticides: productPesticide,
   fertilizers: productFertilizer,
