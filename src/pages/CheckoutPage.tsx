@@ -36,13 +36,19 @@ export default function CheckoutPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const [step, setStep] = useState(1); // 1=address, 2=payment, 3=confirm
+  const [step, setStep] = useState(1);
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const [placing, setPlacing] = useState(false);
   const [settings, setSettings] = useState<DeliverySettings>({ base_charge: 50, free_delivery_above: 1000, estimated_days_local: 2, estimated_days_district: 4 });
+
+  // Coupon state
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount_type: string; discount_value: number } | null>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponError, setCouponError] = useState("");
 
   const [newAddr, setNewAddr] = useState({
     label: "Home", full_name: "", phone: "", address_line1: "", address_line2: "",
