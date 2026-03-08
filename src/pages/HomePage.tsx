@@ -44,7 +44,41 @@ export default function HomePage() {
   const heroY = useTransform(scrollY, [0, 600], [0, 200]);
   const heroScale = useTransform(scrollY, [0, 600], [1, 1.15]);
 
-  // Pull-to-refresh state
+  // Video reliability: force play on visibility and handle buffering
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoFailed, setVideoFailed] = useState(false);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const tryPlay = () => {
+      video.play().catch(() => setVideoFailed(true));
+    };
+
+    // Retry on stall/pause
+    const onStalled = () => {
+      video.load();
+      tryPlay();
+    };
+
+    video.addEventListener('stalled', onStalled);
+    video.addEventListener('waiting', onStalled);
+
+    // Also use IntersectionObserver to play when visible
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) tryPlay(); },
+      { threshold: 0.25 }
+    );
+    observer.observe(video);
+
+    return () => {
+      video.removeEventListener('stalled', onStalled);
+      video.removeEventListener('waiting', onStalled);
+      observer.disconnect();
+    };
+  }, []);
+
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
   const touchStartY = useRef(0);
