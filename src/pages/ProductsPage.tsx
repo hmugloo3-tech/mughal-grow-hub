@@ -130,10 +130,20 @@ export default function ProductsPage() {
                         {product.stock > 0 ? `${product.stock} in stock` : "Out of Stock"}
                       </span>
                     </div>
-                    <a href={`https://wa.me/916006561732?text=${encodeURIComponent(`Hi! I want to order: ${product.name} (₹${product.price})`)}`}
-                      target="_blank" rel="noopener noreferrer">
-                      <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 gap-2">Order via WhatsApp</Button>
-                    </a>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => {
+                          addItem({ id: product.id, name: product.name, price: product.price, category: product.category, image_url: product.image_url || fallbackImages[product.category], stock: product.stock });
+                          setAddedIds((prev) => new Set(prev).add(product.id));
+                          toast({ title: `${product.name} added to cart!` });
+                          setTimeout(() => setAddedIds((prev) => { const n = new Set(prev); n.delete(product.id); return n; }), 2000);
+                        }}
+                        disabled={product.stock <= 0}
+                        className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 gap-2"
+                      >
+                        {addedIds.has(product.id) ? <><Check className="h-4 w-4" /> Added</> : <><ShoppingCart className="h-4 w-4" /> Add to Cart</>}
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </motion.div>
