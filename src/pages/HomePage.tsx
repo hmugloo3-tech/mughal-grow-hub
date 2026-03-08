@@ -10,13 +10,13 @@ import { useCart } from "@/hooks/useCart";
 import { useToast } from "@/hooks/use-toast";
 import { testimonials, categories, blogPosts } from "@/data/siteData";
 import SEO from "@/components/SEO";
+import heroBg from "@/assets/hero-bg.jpg";
 import heroPoster from "@/assets/hero-poster.jpg";
 import productPesticide from "@/assets/product-pesticide.jpg";
 import productFertilizer from "@/assets/product-fertilizer.jpg";
 import productSeeds from "@/assets/product-seeds.jpg";
 import productGrowth from "@/assets/product-growth.jpg";
 import productTools from "@/assets/product-tools.jpg";
-
 const categoryImages: Record<string, string> = {
   pesticides: productPesticide,
   fertilizers: productFertilizer,
@@ -95,7 +95,12 @@ export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const fetchProducts = useCallback(() => {
-    return supabase.from("products").select("*").eq("is_active", true).order("created_at", { ascending: false }).limit(8)
+    return supabase
+      .from("products")
+      .select("id,name,category,description,price,stock,image_url,is_active,created_at")
+      .eq("is_active", true)
+      .order("created_at", { ascending: false })
+      .limit(8)
       .then(({ data }) => setFeaturedProducts(data || []));
   }, []);
 
@@ -137,7 +142,7 @@ export default function HomePage() {
       <section className="relative min-h-[85vh] md:min-h-[90vh] flex items-center overflow-hidden">
         {isMobile ? (
           <div className="absolute inset-0">
-            <img src={heroPoster} alt="Agricultural farmland in Kashmir valley" className="w-full h-full object-cover" loading="eager" />
+            <img src={heroBg} alt="Agricultural farmland in Kashmir valley" className="w-full h-full object-cover" loading="eager" fetchPriority="high" decoding="async" />
             <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 via-foreground/65 to-foreground/30" />
           </div>
         ) : (
