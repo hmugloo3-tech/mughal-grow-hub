@@ -398,10 +398,46 @@ export default function CheckoutPage() {
                 {deliveryCharge === 0 && totalPrice >= settings.free_delivery_above && (
                   <p className="text-xs text-leaf">🎉 Free delivery on orders above ₹{settings.free_delivery_above}!</p>
                 )}
+                {appliedCoupon && (
+                  <div className="flex justify-between text-primary font-medium">
+                    <span className="flex items-center gap-1"><Tag className="h-3 w-3" /> {appliedCoupon.code}</span>
+                    <span>-₹{couponDiscount}</span>
+                  </div>
+                )}
                 <div className="border-t border-border pt-2 flex justify-between font-bold text-foreground text-base">
                   <span>Total</span><span className="text-primary">₹{grandTotal}</span>
                 </div>
               </div>
+
+              {/* Coupon Input */}
+              {!appliedCoupon ? (
+                <div className="mt-4 pt-4 border-t border-border">
+                  <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Have a coupon?</label>
+                  <div className="flex gap-2">
+                    <Input
+                      value={couponCode}
+                      onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setCouponError(""); }}
+                      placeholder="Enter code"
+                      className="text-sm h-9"
+                      maxLength={20}
+                    />
+                    <Button size="sm" onClick={applyCoupon} disabled={couponLoading || !couponCode.trim()}
+                      className="bg-primary text-primary-foreground h-9 text-xs px-3">
+                      {couponLoading ? "..." : "Apply"}
+                    </Button>
+                  </div>
+                  {couponError && <p className="text-xs text-destructive mt-1">{couponError}</p>}
+                </div>
+              ) : (
+                <div className="mt-4 pt-4 border-t border-border">
+                  <div className="flex items-center justify-between bg-primary/10 rounded-lg px-3 py-2">
+                    <span className="text-xs font-semibold text-primary flex items-center gap-1">
+                      <Tag className="h-3 w-3" /> {appliedCoupon.code} applied
+                    </span>
+                    <button onClick={removeCoupon} className="text-xs text-destructive hover:underline">Remove</button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
