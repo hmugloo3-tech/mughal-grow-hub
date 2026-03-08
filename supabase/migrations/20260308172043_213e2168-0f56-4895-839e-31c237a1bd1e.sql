@@ -1,0 +1,4 @@
+UPDATE products SET image_url = 'https://mlefvdiswjtprivsfrkb.supabase.co/storage/v1/object/public/product-images/potash-mop.jpg' WHERE id = '37834724-63c2-476d-b837-0300df94505c';
+UPDATE products SET image_url = 'https://mlefvdiswjtprivsfrkb.supabase.co/storage/v1/object/public/product-images/urea-fertilizer.jpg' WHERE id = '2a07e42e-39b9-4e5e-aadb-80c4ce9c70de';
+UPDATE products SET image_url = 'https://mlefvdiswjtprivsfrkb.supabase.co/storage/v1/object/public/product-images/organic-vermicompost.jpg' WHERE id = '0d90e97c-a0b8-49cd-8159-77f306d4575c';
+UPDATE products SET image_url = 'https://mlefvdiswjtprivsfrkb.supabase.co/storage/v1/object/public/product-images/dap-fertilizer.jpg' WHERE id = 'ff7bea81-a2e5-449d-9d26-0fe62c1e8db7';
