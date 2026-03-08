@@ -35,6 +35,15 @@ const stats = [
 ];
 
 export default function HomePage() {
+  const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
+  const { addItem } = useCart();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    supabase.from("products").select("*").eq("is_active", true).order("created_at", { ascending: false }).limit(4)
+      .then(({ data }) => setFeaturedProducts(data || []));
+  }, []);
+
   return (
     <div className="min-h-screen">
       {/* Hero */}
