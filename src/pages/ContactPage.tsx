@@ -86,12 +86,12 @@ export default function ContactPage() {
               ))}
             </div>
 
-            <div className="mt-8 rounded-xl overflow-hidden shadow-lg">
+            <div className="mt-8 rounded-xl overflow-hidden shadow-lg aspect-video md:aspect-auto md:h-[450px]">
               <iframe
                 title="Mughal Pesticides Location"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3318.0!2d75.2596!3d33.5850!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38e1a6c0c0c0c0c0%3A0x0!2sGadole%20Ahlan%2C%20Kokernag%2C%20Anantnag%2C%20Jammu%20and%20Kashmir%20192202!5e0!3m2!1sen!2sin!4v1"
+                src="https://maps.google.com/maps?q=Gadool%20Ahlan%20Kokernag%20Anantnag%20Jammu%20and%20Kashmir&t=&z=13&ie=UTF8&iwloc=&output=embed"
                 width="100%"
-                height="250"
+                height="100%"
                 style={{ border: 0 }}
                 allowFullScreen
                 loading="lazy"
