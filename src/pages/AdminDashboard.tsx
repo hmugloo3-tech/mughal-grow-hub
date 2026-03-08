@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   Package, ShoppingCart, FileText, BarChart3, Plus, Pencil, Trash2, X, Save,
   Truck, MapPin, Upload, Image as ImageIcon, Users, AlertTriangle, TrendingUp,
-  IndianRupee, Tag, Boxes, Eye, Search, ArrowUpDown, Check
+  IndianRupee, Tag, Boxes, Eye, Search, ArrowUpDown, Check, MessageSquare, Mail, MailOpen
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, AreaChart, Area } from "recharts";
 import type { Database } from "@/integrations/supabase/types";
@@ -38,6 +38,7 @@ export default function AdminDashboard() {
       {tab === "coupons" && <CouponsTab />}
       {tab === "delivery" && <DeliverySettingsTab />}
       {tab === "blog" && <BlogTab />}
+      {tab === "messages" && <MessagesTab />}
     </AdminLayout>
   );
 }
@@ -955,3 +956,91 @@ function CouponsTab() {
     </div>
   );
 }
+
+/* ─── MESSAGES ─── */
+function MessagesTab() {
+  const [messages, setMessages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase
+      .from("contact_submissions")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .then(({ data }) => {
+        setMessages(data || []);
+        setLoading(false);
+      });
+  }, []);
+
+  const toggleRead = async (id: string, current: boolean) => {
+    await supabase.from("contact_submissions").update({ is_read: !current }).eq("id", id);
+    setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, is_read: !current } : m)));
+  };
+
+  const remove = async (id: string) => {
+    await supabase.from("contact_submissions").delete().eq("id", id);
+    setMessages((prev) => prev.filter((m) => m.id !== id));
+  };
+
+  if (loading) return <div className="flex justify-center py-12"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" /></div>;
+
+  return (
+    <div>
+      <h2 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+        <MessageSquare className="h-5 w-5 text-primary" /> Contact Messages
+        <span className="text-sm font-normal text-muted-foreground ml-2">
+          {messages.filter((m) => !m.is_read).length} unread
+        </span>
+      </h2>
+
+      {messages.length === 0 ? (
+        <div className="text-center py-12 text-muted-foreground">
+          <Mail className="h-12 w-12 mx-auto mb-3 opacity-50" />
+          <p>No messages yet</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`glass-card rounded-xl p-4 border-l-4 transition-colors ${
+                msg.is_read ? "border-l-muted-foreground/20" : "border-l-primary"
+              }`}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-semibold text-foreground text-sm">{msg.name}</span>
+                    {!msg.is_read && (
+                      <span className="text-[10px] bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full font-semibold">NEW</span>
+                    )}
+                  </div>
+                  {msg.email && <p className="text-xs text-muted-foreground">{msg.email}</p>}
+                  {msg.phone && <p className="text-xs text-muted-foreground">{msg.phone}</p>}
+                  <p className="text-sm text-foreground mt-2 leading-relaxed">{msg.message}</p>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {new Date(msg.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+                  </p>
+                </div>
+                <div className="flex gap-1 shrink-0">
+                  <button
+                    onClick={() => toggleRead(msg.id, msg.is_read)}
+                    className="p-2 rounded-lg hover:bg-accent transition-colors"
+                    title={msg.is_read ? "Mark as unread" : "Mark as read"}
+                  >
+                    {msg.is_read ? <Mail className="h-4 w-4 text-muted-foreground" /> : <MailOpen className="h-4 w-4 text-primary" />}
+                  </button>
+                  <button onClick={() => remove(msg.id)} className="p-2 rounded-lg hover:bg-destructive/10 transition-colors">
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+

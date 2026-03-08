@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -13,17 +14,39 @@ const fadeUp = {
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
+  const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim() || !form.message.trim()) {
       toast({ title: "Please fill in required fields", variant: "destructive" });
       return;
     }
-    const whatsappMsg = `Hi! I'm ${form.name}.\n${form.email ? `Email: ${form.email}\n` : ""}${form.phone ? `Phone: ${form.phone}\n` : ""}\nMessage: ${form.message}`;
-    window.open(`https://wa.me/916006561732?text=${encodeURIComponent(whatsappMsg)}`, "_blank");
-    toast({ title: "Redirecting to WhatsApp!", description: "Your message will be sent via WhatsApp." });
+
+    setSubmitting(true);
+    try {
+      // Save to database
+      const { error } = await supabase.from("contact_submissions").insert({
+        name: form.name.trim(),
+        email: form.email.trim() || null,
+        phone: form.phone.trim() || null,
+        message: form.message.trim(),
+      });
+
+      if (error) throw error;
+
+      // Also open WhatsApp
+      const whatsappMsg = `Hi! I'm ${form.name}.\n${form.email ? `Email: ${form.email}\n` : ""}${form.phone ? `Phone: ${form.phone}\n` : ""}\nMessage: ${form.message}`;
+      window.open(`https://wa.me/916006561732?text=${encodeURIComponent(whatsappMsg)}`, "_blank");
+
+      toast({ title: "Message sent successfully!", description: "We'll get back to you soon." });
+      setForm({ name: "", email: "", phone: "", message: "" });
+    } catch {
+      toast({ title: "Failed to send message", description: "Please try again.", variant: "destructive" });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -63,7 +86,6 @@ export default function ContactPage() {
               ))}
             </div>
 
-            {/* Map */}
             <div className="mt-8 rounded-xl overflow-hidden shadow-lg">
               <iframe
                 title="Mughal Pesticides Location"
@@ -82,51 +104,26 @@ export default function ContactPage() {
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1}>
             <div className="glass-card rounded-2xl p-8">
               <h2 className="text-2xl font-bold text-foreground mb-2">Send a Message</h2>
-              <p className="text-sm text-muted-foreground mb-6">Your message will be sent via WhatsApp for quick response.</p>
+              <p className="text-sm text-muted-foreground mb-6">Your message will be saved and also sent via WhatsApp for quick response.</p>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="text-sm font-medium text-foreground mb-1 block">Name *</label>
-                  <Input
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    placeholder="Your name"
-                    maxLength={100}
-                    required
-                  />
+                  <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Your name" maxLength={100} required />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground mb-1 block">Email</label>
-                  <Input
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    placeholder="your@email.com"
-                    maxLength={255}
-                  />
+                  <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="your@email.com" maxLength={255} />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground mb-1 block">Phone</label>
-                  <Input
-                    type="tel"
-                    value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    placeholder="+91 XXXXXXXXXX"
-                    maxLength={15}
-                  />
+                  <Input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+91 XXXXXXXXXX" maxLength={15} />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground mb-1 block">Message *</label>
-                  <Textarea
-                    value={form.message}
-                    onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    placeholder="How can we help you?"
-                    rows={4}
-                    maxLength={1000}
-                    required
-                  />
+                  <Textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="How can we help you?" rows={4} maxLength={1000} required />
                 </div>
-                <Button type="submit" size="lg" className="w-full bg-primary text-primary-foreground hover:bg-primary/90 gap-2 font-semibold">
-                  <Send className="h-4 w-4" /> Send via WhatsApp
+                <Button type="submit" size="lg" disabled={submitting} className="w-full bg-primary text-primary-foreground hover:bg-primary/90 gap-2 font-semibold">
+                  {submitting ? <><Loader2 className="h-4 w-4 animate-spin" /> Sending...</> : <><Send className="h-4 w-4" /> Send Message</>}
                 </Button>
               </form>
             </div>

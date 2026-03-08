@@ -53,6 +53,36 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_submissions: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          is_read: boolean
+          message: string
+          name: string
+          phone: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_read?: boolean
+          message: string
+          name: string
+          phone?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_read?: boolean
+          message?: string
+          name?: string
+          phone?: string | null
+        }
+        Relationships: []
+      }
       coupons: {
         Row: {
           code: string
@@ -240,6 +270,47 @@ export type Database = {
             columns: ["delivery_address_id"]
             isOneToOne: false
             referencedRelation: "delivery_addresses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_reviews: {
+        Row: {
+          created_at: string
+          id: string
+          is_approved: boolean
+          product_id: string
+          rating: number
+          review_text: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_approved?: boolean
+          product_id: string
+          rating: number
+          review_text?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_approved?: boolean
+          product_id?: string
+          rating?: number
+          review_text?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_reviews_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
