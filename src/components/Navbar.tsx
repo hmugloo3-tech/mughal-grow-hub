@@ -76,6 +76,9 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Theme Toggle */}
+          <ThemeToggle />
+
           {/* Cart */}
           <Link to="/cart" className="relative p-2 rounded-lg hover:bg-accent transition-colors">
             <ShoppingCart className="h-5 w-5 text-foreground" />

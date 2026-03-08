@@ -61,6 +61,7 @@ const App = () => (
             </Routes>
             <Footer />
             <WhatsAppButton />
+            <AIChatWidget />
           </BrowserRouter>
         </CartProvider>
       </AuthProvider>
