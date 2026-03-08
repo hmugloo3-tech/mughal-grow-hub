@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ShoppingCart, Phone, User } from "lucide-react";
+import { Menu, X, ShoppingCart, Phone, User, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/hooks/useCart";
@@ -10,8 +10,14 @@ import logo from "@/assets/logo.png";
 const navLinks = [
   { name: "Home", path: "/" },
   { name: "Products", path: "/products" },
+  { name: "Farmer Guide", path: "/farmer-guide", children: [
+    { name: "🌿 Crop Advisor", path: "/crop-advisor" },
+    { name: "🐛 Pest Guide", path: "/pest-guide" },
+    { name: "🌱 Fertilizer Guide", path: "/fertilizer-guide" },
+    { name: "📅 Seasonal Tips", path: "/seasonal-tips" },
+    { name: "📰 Blog", path: "/blog" },
+  ]},
   { name: "About", path: "/about" },
-  { name: "Tips & Blog", path: "/blog" },
   { name: "Contact", path: "/contact" },
 ];
 
@@ -34,19 +40,38 @@ export default function Navbar() {
 
         {/* Desktop Nav */}
         <div className="hidden lg:flex items-center gap-1">
-          {navLinks.map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                location.pathname === link.path
-                  ? "bg-primary text-primary-foreground"
-                  : "text-foreground hover:bg-accent hover:text-accent-foreground"
-              }`}
-            >
-              {link.name}
-            </Link>
-          ))}
+          {navLinks.map((link) =>
+            link.children ? (
+              <div key={link.path} className="relative group">
+                <button className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                  link.children.some(c => location.pathname === c.path)
+                    ? "bg-primary text-primary-foreground"
+                    : "text-foreground hover:bg-accent hover:text-accent-foreground"
+                }`}>
+                  {link.name} <ChevronDown className="h-3 w-3" />
+                </button>
+                <div className="absolute top-full left-0 mt-1 w-48 rounded-xl glass-card border border-border/50 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  {link.children.map(child => (
+                    <Link key={child.path} to={child.path}
+                      className={`block px-4 py-2.5 text-sm font-medium transition-colors ${
+                        location.pathname === child.path ? "text-primary bg-accent" : "text-foreground hover:bg-accent hover:text-accent-foreground"
+                      }`}>
+                      {child.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <Link key={link.path} to={link.path}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  location.pathname === link.path
+                    ? "bg-primary text-primary-foreground"
+                    : "text-foreground hover:bg-accent hover:text-accent-foreground"
+                }`}>
+                {link.name}
+              </Link>
+            )
+          )}
         </div>
 
         <div className="flex items-center gap-2">
@@ -97,14 +122,28 @@ export default function Navbar() {
             className="lg:hidden overflow-hidden glass-card border-t border-border/50"
           >
             <div className="container-custom py-4 flex flex-col gap-1">
-              {navLinks.map((link) => (
-                <Link key={link.path} to={link.path} onClick={() => setOpen(false)}
-                  className={`px-4 py-3 rounded-lg text-sm font-medium transition-all ${
-                    location.pathname === link.path ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-accent"
-                  }`}>
-                  {link.name}
-                </Link>
-              ))}
+              {navLinks.map((link) =>
+                link.children ? (
+                  <div key={link.path}>
+                    <p className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{link.name}</p>
+                    {link.children.map(child => (
+                      <Link key={child.path} to={child.path} onClick={() => setOpen(false)}
+                        className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all block ${
+                          location.pathname === child.path ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-accent"
+                        }`}>
+                        {child.name}
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <Link key={link.path} to={link.path} onClick={() => setOpen(false)}
+                    className={`px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+                      location.pathname === link.path ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-accent"
+                    }`}>
+                    {link.name}
+                  </Link>
+                )
+              )}
               {!user && (
                 <Link to="/auth" onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-accent">
                   Sign In / Sign Up

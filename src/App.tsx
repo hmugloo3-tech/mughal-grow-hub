@@ -13,6 +13,10 @@ import ProductsPage from "./pages/ProductsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import AboutPage from "./pages/AboutPage";
 import BlogPage from "./pages/BlogPage";
+import CropAdvisorPage from "./pages/CropAdvisorPage";
+import PestGuidePage from "./pages/PestGuidePage";
+import FertilizerGuidePage from "./pages/FertilizerGuidePage";
+import SeasonalTipsPage from "./pages/SeasonalTipsPage";
 import ContactPage from "./pages/ContactPage";
 import CartPage from "./pages/CartPage";
 import AuthPage from "./pages/AuthPage";
@@ -40,6 +44,10 @@ const App = () => (
               <Route path="/products/:id" element={<ProductDetailPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/blog" element={<BlogPage />} />
+              <Route path="/crop-advisor" element={<CropAdvisorPage />} />
+              <Route path="/pest-guide" element={<PestGuidePage />} />
+              <Route path="/fertilizer-guide" element={<FertilizerGuidePage />} />
+              <Route path="/seasonal-tips" element={<SeasonalTipsPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/auth" element={<AuthPage />} />
