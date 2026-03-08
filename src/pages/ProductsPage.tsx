@@ -314,7 +314,7 @@ export default function ProductsPage() {
                       src={product.image_url || fallbackImages[product.category] || productPesticide}
                       alt={product.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                      loading="lazy"
+                      loading={i < 8 ? "eager" : "lazy"}
                       width={400} height={400}
                     />
                     <div className="hidden md:flex absolute inset-0 bg-foreground/0 group-hover:bg-foreground/20 transition-all duration-300 items-center justify-center">
