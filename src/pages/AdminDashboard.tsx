@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import {
-  Package, ShoppingCart, FileText, BarChart3, LogOut, Plus, Pencil, Trash2, X, Save, Truck, MapPin, Upload, Image as ImageIcon, Users, AlertTriangle, TrendingUp, IndianRupee
+  Package, ShoppingCart, FileText, BarChart3, LogOut, Plus, Pencil, Trash2, X, Save, Truck, MapPin, Upload, Image as ImageIcon, Users, AlertTriangle, TrendingUp, IndianRupee, Tag
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
 import type { Database } from "@/integrations/supabase/types";
