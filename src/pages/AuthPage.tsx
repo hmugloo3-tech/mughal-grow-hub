@@ -96,13 +96,13 @@ export default function AuthPage() {
       </div>
 
       {/* Right panel - form */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-10 bg-background">
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-10 pt-24 lg:pt-6 bg-background">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
           className="w-full max-w-md">
 
           {/* Mobile logo */}
           <div className="lg:hidden flex justify-center mb-6">
-            <motion.img src={logo} alt="Mughal Pesticides" className="h-20 w-20 object-contain rounded-xl" whileHover={{ scale: 1.05 }} />
+            <motion.img src={logo} alt="Mughal Pesticides" className="h-24 w-24 object-contain rounded-xl" whileHover={{ scale: 1.05 }} />
           </div>
 
           {/* Toggle tabs */}
