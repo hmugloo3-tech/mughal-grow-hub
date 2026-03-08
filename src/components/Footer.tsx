@@ -60,7 +60,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-2 text-sm text-primary-foreground/80">
                 <Mail className="h-4 w-4 shrink-0 text-secondary" />
-                <span>info@mughalpesticides.com</span>
+                <span>hamidmugloo89@gmail.com</span>
               </div>
             </div>
           </div>
