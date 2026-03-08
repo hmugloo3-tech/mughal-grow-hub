@@ -270,11 +270,7 @@ export default function ProductDetailPage() {
 
             <TabsContent value="reviews">
               <div className="glass-card rounded-xl p-6 mt-4">
-                <div className="text-center py-8">
-                  <Star className="h-10 w-10 text-secondary mx-auto mb-3" />
-                  <p className="text-foreground font-semibold mb-1">Customer Reviews Coming Soon</p>
-                  <p className="text-sm text-muted-foreground">Be the first to review this product after purchase!</p>
-                </div>
+                <ProductReviews productId={product.id} />
               </div>
             </TabsContent>
           </Tabs>
