@@ -53,29 +53,34 @@ export default function HomePage() {
       />
 
       {/* Hero */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden">
+      <section className="relative min-h-[85vh] md:min-h-[90vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
           <img src={heroBg} alt="Agricultural farmland in Kashmir valley" className="w-full h-full object-cover" loading="eager" width={1920} height={1080} />
-          <div className="absolute inset-0 bg-gradient-to-r from-foreground/80 via-foreground/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 via-foreground/60 to-foreground/20 md:to-transparent" />
         </div>
-        <div className="container-custom relative z-10 py-32">
+        <div className="container-custom relative z-10 py-24 md:py-32">
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-2xl">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-secondary text-secondary-foreground text-sm font-semibold mb-6">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-secondary text-secondary-foreground text-xs md:text-sm font-semibold mb-4 md:mb-6">
               🌾 Premium Agricultural Solutions
             </span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-background leading-tight mb-6">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-background leading-tight mb-4 md:mb-6">
               Trusted Partner for <span className="text-secondary">Healthy Crops</span>
             </h1>
-            <p className="text-lg text-background/80 mb-8 max-w-xl">
+            <p className="text-base md:text-lg text-background/80 mb-6 md:mb-8 max-w-xl leading-relaxed">
               Your one-stop destination for premium pesticides, fertilizers, seeds, and farming tools in Kashmir. Quality products for maximum yield.
             </p>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <Link to="/products">
-                <Button size="lg" className="bg-secondary text-secondary-foreground hover:bg-gold-dark font-semibold text-base px-8 gap-2">
+                <Button size="lg" className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-gold-dark font-semibold text-base px-8 gap-2 h-12 md:h-auto">
                   Shop Now <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
-              <Link to="/contact">
+              <a href="tel:+916006561732" className="sm:hidden">
+                <Button size="lg" variant="outline" className="w-full border-primary-foreground text-primary-foreground bg-primary-foreground/10 hover:bg-primary-foreground/20 font-semibold text-base px-8 h-12 gap-2">
+                  📞 Call Now
+                </Button>
+              </a>
+              <Link to="/contact" className="hidden sm:block">
                 <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground bg-primary-foreground/10 hover:bg-primary-foreground/20 font-semibold text-base px-8">
                   Contact Us
                 </Button>
