@@ -40,19 +40,38 @@ export default function Navbar() {
 
         {/* Desktop Nav */}
         <div className="hidden lg:flex items-center gap-1">
-          {navLinks.map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                location.pathname === link.path
-                  ? "bg-primary text-primary-foreground"
-                  : "text-foreground hover:bg-accent hover:text-accent-foreground"
-              }`}
-            >
-              {link.name}
-            </Link>
-          ))}
+          {navLinks.map((link) =>
+            link.children ? (
+              <div key={link.path} className="relative group">
+                <button className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                  link.children.some(c => location.pathname === c.path)
+                    ? "bg-primary text-primary-foreground"
+                    : "text-foreground hover:bg-accent hover:text-accent-foreground"
+                }`}>
+                  {link.name} <ChevronDown className="h-3 w-3" />
+                </button>
+                <div className="absolute top-full left-0 mt-1 w-48 rounded-xl glass-card border border-border/50 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  {link.children.map(child => (
+                    <Link key={child.path} to={child.path}
+                      className={`block px-4 py-2.5 text-sm font-medium transition-colors ${
+                        location.pathname === child.path ? "text-primary bg-accent" : "text-foreground hover:bg-accent hover:text-accent-foreground"
+                      }`}>
+                      {child.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <Link key={link.path} to={link.path}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  location.pathname === link.path
+                    ? "bg-primary text-primary-foreground"
+                    : "text-foreground hover:bg-accent hover:text-accent-foreground"
+                }`}>
+                {link.name}
+              </Link>
+            )
+          )}
         </div>
 
         <div className="flex items-center gap-2">
