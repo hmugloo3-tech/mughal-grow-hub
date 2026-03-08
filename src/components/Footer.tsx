@@ -60,7 +60,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-2 text-sm text-primary-foreground/80">
                 <Mail className="h-4 w-4 shrink-0 text-secondary" />
-                <span>hamidmugloo89@gmail.com</span>
+                <a href="mailto:hamidmugloo89@gmail.com" className="hover:text-secondary transition-colors">hamidmugloo89@gmail.com</a>
               </div>
             </div>
           </div>
