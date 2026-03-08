@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import {
-  Package, ShoppingCart, FileText, BarChart3, LogOut, Plus, Pencil, Trash2, X, Save, Truck, MapPin, Upload, Image as ImageIcon, Users, AlertTriangle, TrendingUp, IndianRupee
+  Package, ShoppingCart, FileText, BarChart3, LogOut, Plus, Pencil, Trash2, X, Save, Truck, MapPin, Upload, Image as ImageIcon, Users, AlertTriangle, TrendingUp, IndianRupee, Tag
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
 import type { Database } from "@/integrations/supabase/types";
@@ -16,7 +16,7 @@ type Product = Database["public"]["Tables"]["products"]["Row"];
 type Order = Database["public"]["Tables"]["orders"]["Row"];
 type BlogPost = Database["public"]["Tables"]["blog_posts"]["Row"];
 
-type Tab = "overview" | "products" | "orders" | "customers" | "blog" | "delivery";
+type Tab = "overview" | "products" | "orders" | "customers" | "coupons" | "blog" | "delivery";
 
 export default function AdminDashboard() {
   const { user, isAdmin, loading, signOut } = useAuth();
@@ -41,6 +41,7 @@ export default function AdminDashboard() {
             { id: "products" as Tab, label: "Products", icon: Package },
             { id: "orders" as Tab, label: "Orders", icon: ShoppingCart },
             { id: "customers" as Tab, label: "Customers", icon: Users },
+            { id: "coupons" as Tab, label: "Coupons", icon: Tag },
             { id: "delivery" as Tab, label: "Delivery", icon: Truck },
             { id: "blog" as Tab, label: "Blog", icon: FileText },
           ]).map((t) => (
@@ -55,6 +56,7 @@ export default function AdminDashboard() {
         {tab === "products" && <ProductsTab />}
         {tab === "orders" && <OrdersTab />}
         {tab === "customers" && <CustomersTab />}
+        {tab === "coupons" && <CouponsTab />}
         {tab === "delivery" && <DeliverySettingsTab />}
         {tab === "blog" && <BlogTab />}
       </div>
@@ -636,6 +638,106 @@ function BlogTab() {
             <div className="flex gap-2">
               <button onClick={() => setEditing(p)} className="p-2 rounded-lg hover:bg-accent"><Pencil className="h-4 w-4 text-primary" /></button>
               <button onClick={() => remove(p.id)} className="p-2 rounded-lg hover:bg-destructive/10"><Trash2 className="h-4 w-4 text-destructive" /></button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─── COUPONS TAB ─── */
+function CouponsTab() {
+  const [coupons, setCoupons] = useState<any[]>([]);
+  const [editing, setEditing] = useState<any | null>(null);
+  const { toast } = useToast();
+
+  const load = async () => {
+    const { data } = await supabase.from("coupons").select("*").order("created_at", { ascending: false });
+    setCoupons(data || []);
+  };
+  useEffect(() => { load(); }, []);
+
+  const save = async () => {
+    if (!editing?.code) { toast({ title: "Coupon code required", variant: "destructive" }); return; }
+    const payload = {
+      code: editing.code.toUpperCase().trim(),
+      description: editing.description || null,
+      discount_type: editing.discount_type || "percentage",
+      discount_value: editing.discount_value || 0,
+      min_order_amount: editing.min_order_amount || 0,
+      max_uses: editing.max_uses || null,
+      is_active: editing.is_active ?? true,
+    };
+    if (editing.id) {
+      await supabase.from("coupons").update(payload).eq("id", editing.id);
+    } else {
+      await supabase.from("coupons").insert(payload);
+    }
+    toast({ title: "Coupon saved!" });
+    setEditing(null);
+    load();
+  };
+
+  const remove = async (id: string) => {
+    await supabase.from("coupons").delete().eq("id", id);
+    toast({ title: "Coupon deleted" });
+    load();
+  };
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold text-foreground">Manage Coupons ({coupons.length})</h2>
+        <Button size="sm" onClick={() => setEditing({ code: "", discount_type: "percentage", discount_value: 10, min_order_amount: 0, is_active: true })} className="gap-1 bg-primary text-primary-foreground">
+          <Plus className="h-4 w-4" /> Add Coupon
+        </Button>
+      </div>
+
+      {editing && (
+        <div className="glass-card rounded-xl p-6 mb-6">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="font-semibold">{editing.id ? "Edit Coupon" : "New Coupon"}</h3>
+            <button onClick={() => setEditing(null)}><X className="h-5 w-5 text-muted-foreground" /></button>
+          </div>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div><label className="text-sm font-medium block mb-1">Code *</label><Input value={editing.code || ""} onChange={(e) => setEditing({ ...editing, code: e.target.value.toUpperCase() })} placeholder="e.g. WELCOME10" maxLength={20} /></div>
+            <div><label className="text-sm font-medium block mb-1">Discount Type</label>
+              <select value={editing.discount_type || "percentage"} onChange={(e) => setEditing({ ...editing, discount_type: e.target.value })} className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm">
+                <option value="percentage">Percentage (%)</option><option value="fixed">Fixed Amount (₹)</option>
+              </select>
+            </div>
+            <div><label className="text-sm font-medium block mb-1">Discount Value</label><Input type="number" value={editing.discount_value || 0} onChange={(e) => setEditing({ ...editing, discount_value: Number(e.target.value) })} min={0} /></div>
+            <div><label className="text-sm font-medium block mb-1">Min Order Amount (₹)</label><Input type="number" value={editing.min_order_amount || 0} onChange={(e) => setEditing({ ...editing, min_order_amount: Number(e.target.value) })} min={0} /></div>
+            <div><label className="text-sm font-medium block mb-1">Max Uses (blank = unlimited)</label><Input type="number" value={editing.max_uses || ""} onChange={(e) => setEditing({ ...editing, max_uses: e.target.value ? Number(e.target.value) : null })} min={1} /></div>
+            <div className="md:col-span-2"><label className="text-sm font-medium block mb-1">Description</label><Input value={editing.description || ""} onChange={(e) => setEditing({ ...editing, description: e.target.value })} placeholder="e.g. Welcome discount for new customers" maxLength={200} /></div>
+            <label className="flex items-center gap-2"><input type="checkbox" checked={editing.is_active ?? true} onChange={(e) => setEditing({ ...editing, is_active: e.target.checked })} /><span className="text-sm">Active</span></label>
+          </div>
+          <div className="flex justify-end mt-4"><Button onClick={save} className="gap-1 bg-primary text-primary-foreground"><Save className="h-4 w-4" /> Save Coupon</Button></div>
+        </div>
+      )}
+
+      <div className="space-y-3">
+        {coupons.length === 0 && <p className="text-muted-foreground text-center py-8">No coupons yet.</p>}
+        {coupons.map((c) => (
+          <div key={c.id} className="glass-card rounded-lg p-4 flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-mono font-bold text-primary">{c.code}</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${c.is_active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                  {c.is_active ? "Active" : "Inactive"}
+                </span>
+              </div>
+              <p className="text-sm text-muted-foreground mt-0.5">
+                {c.discount_type === "percentage" ? `${c.discount_value}% off` : `₹${c.discount_value} off`}
+                {c.min_order_amount > 0 ? ` · Min ₹${c.min_order_amount}` : ""}
+                {c.max_uses ? ` · ${c.used_count}/${c.max_uses} used` : ` · ${c.used_count} used`}
+              </p>
+              {c.description && <p className="text-xs text-muted-foreground">{c.description}</p>}
+            </div>
+            <div className="flex gap-2 shrink-0">
+              <button onClick={() => setEditing(c)} className="p-2 rounded-lg hover:bg-accent"><Pencil className="h-4 w-4 text-primary" /></button>
+              <button onClick={() => remove(c.id)} className="p-2 rounded-lg hover:bg-destructive/10"><Trash2 className="h-4 w-4 text-destructive" /></button>
             </div>
           </div>
         ))}

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
+import ThemeToggle from "@/components/ThemeToggle";
 import logo from "@/assets/logo.png";
 
 const navLinks = [
@@ -75,6 +76,9 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Theme Toggle */}
+          <ThemeToggle />
+
           {/* Cart */}
           <Link to="/cart" className="relative p-2 rounded-lg hover:bg-accent transition-colors">
             <ShoppingCart className="h-5 w-5 text-foreground" />
