@@ -135,7 +135,7 @@ export default function AIChatWidget() {
             animate={{ scale: 1 }}
             exit={{ scale: 0 }}
             onClick={() => setOpen(true)}
-            className="fixed bottom-24 right-6 z-50 bg-primary text-primary-foreground p-4 rounded-full shadow-lg hover:scale-110 transition-transform"
+            className="fixed bottom-28 lg:bottom-24 right-4 lg:right-6 z-40 bg-primary text-primary-foreground p-3.5 lg:p-4 rounded-full shadow-lg hover:scale-110 active:scale-95 transition-transform"
             aria-label="Open AI Chat"
           >
             <Bot className="h-6 w-6" />
