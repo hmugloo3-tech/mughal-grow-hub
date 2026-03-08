@@ -45,6 +45,10 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const { addItem } = useCart();
+  const { toast } = useToast();
+  const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
+
   useEffect(() => {
     const load = async () => {
       const { data } = await supabase
