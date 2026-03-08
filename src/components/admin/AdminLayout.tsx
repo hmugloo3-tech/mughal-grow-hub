@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button";
 import ThemeToggle from "@/components/ThemeToggle";
 import {
   BarChart3, Package, ShoppingCart, Users, Tag, Truck, FileText,
-  LogOut, Menu, X, ChevronLeft, Boxes, LayoutDashboard, Bell, MessageSquare
+  LogOut, Menu, X, ChevronLeft, Boxes, LayoutDashboard, Bell, MessageSquare, Star
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 
-type Tab = "overview" | "products" | "orders" | "customers" | "coupons" | "delivery" | "blog" | "inventory" | "messages";
+type Tab = "overview" | "products" | "orders" | "customers" | "coupons" | "delivery" | "blog" | "inventory" | "messages" | "reviews";
 
 const sidebarItems: { id: Tab; label: string; icon: any }[] = [
   { id: "overview", label: "Dashboard", icon: LayoutDashboard },
@@ -21,6 +21,7 @@ const sidebarItems: { id: Tab; label: string; icon: any }[] = [
   { id: "delivery", label: "Delivery", icon: Truck },
   { id: "blog", label: "Blog", icon: FileText },
   { id: "messages", label: "Messages", icon: MessageSquare },
+  { id: "reviews", label: "Reviews", icon: Star },
 ];
 
 interface AdminLayoutProps {
