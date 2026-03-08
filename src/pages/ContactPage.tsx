@@ -65,7 +65,7 @@ export default function ContactPage() {
             <h2 className="text-2xl font-bold text-foreground mb-6">Get in Touch</h2>
             <div className="space-y-6">
               {[
-                { icon: MapPin, label: "Address", value: "Gadole, Kokernag, Anantnag\nKashmir - 192202" },
+                { icon: MapPin, label: "Address", value: "Gadole Ahlan, Kokernag, Anantnag\nKashmir - 192202" },
                 { icon: Phone, label: "Phone", value: "+91 6006561732", href: "tel:+916006561732" },
                 { icon: Mail, label: "Email", value: "hamidmugloo89@gmail.com", href: "mailto:hamidmugloo89@gmail.com" },
                 { icon: Clock, label: "Hours", value: "Mon-Sat: 8:00 AM - 7:00 PM\nSunday: 9:00 AM - 2:00 PM" },
