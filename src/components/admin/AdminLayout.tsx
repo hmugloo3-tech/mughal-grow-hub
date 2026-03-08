@@ -20,6 +20,7 @@ const sidebarItems: { id: Tab; label: string; icon: any }[] = [
   { id: "coupons", label: "Coupons", icon: Tag },
   { id: "delivery", label: "Delivery", icon: Truck },
   { id: "blog", label: "Blog", icon: FileText },
+  { id: "messages", label: "Messages", icon: MessageSquare },
 ];
 
 interface AdminLayoutProps {
