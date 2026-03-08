@@ -39,6 +39,7 @@ export default function AdminDashboard() {
       {tab === "delivery" && <DeliverySettingsTab />}
       {tab === "blog" && <BlogTab />}
       {tab === "messages" && <MessagesTab />}
+      {tab === "reviews" && <ReviewsTab />}
     </AdminLayout>
   );
 }
