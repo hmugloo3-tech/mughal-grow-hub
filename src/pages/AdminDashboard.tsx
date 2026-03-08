@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   Package, ShoppingCart, FileText, BarChart3, Plus, Pencil, Trash2, X, Save,
   Truck, MapPin, Upload, Image as ImageIcon, Users, AlertTriangle, TrendingUp,
-  IndianRupee, Tag, Boxes, Eye, Search, ArrowUpDown, Check, MessageSquare, Mail, MailOpen
+  IndianRupee, Tag, Boxes, Eye, Search, ArrowUpDown, Check, MessageSquare, Mail, MailOpen, Star, ThumbsUp, ThumbsDown
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, AreaChart, Area } from "recharts";
 import type { Database } from "@/integrations/supabase/types";
