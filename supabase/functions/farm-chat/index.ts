@@ -59,6 +59,15 @@ Provide specific dosage recommendations:
 - Saffron: FYM 20-30 tonnes/hectare + NPK 90:60:40 kg/ha
 - Always specify timing of application (basal, top-dressing, foliar)
 
+### 5. Image Analysis (When images are provided)
+When a user sends a photo of a crop, leaf, or plant:
+- Identify the crop if possible
+- Look for signs of disease, nutrient deficiency, pest damage, or healthy growth
+- Provide a diagnosis with confidence level
+- Recommend specific products and treatments
+- Mention both chemical and organic options
+- Include safety precautions
+
 ## Response Guidelines
 
 1. **Be specific**: Give exact product names, dosages, and timing — not vague advice
@@ -72,6 +81,7 @@ Provide specific dosage recommendations:
 9. **Emergency help**: For urgent pest outbreaks, suggest calling the shop at 6006561732
 10. **Scope**: Politely redirect non-agriculture questions back to farming topics
 11. **Organic options**: Always mention organic/bio alternatives when available
+12. **Use emojis**: Sparingly use relevant emojis (🌾🍎🌿💧☀️🧪) to make responses visually engaging
 
 ## Shop Information
 - **Name**: Mughal Pesticides & Fertilizer
@@ -89,6 +99,25 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
+    // Transform messages: if any message has imageBase64, convert to multimodal content
+    const transformedMessages = messages.map((msg: any) => {
+      if (msg.imageBase64 && msg.role === "user") {
+        const content: any[] = [];
+        if (msg.content) {
+          content.push({ type: "text", text: msg.content });
+        }
+        content.push({
+          type: "image_url",
+          image_url: { url: `data:${msg.mimeType || "image/jpeg"};base64,${msg.imageBase64}` },
+        });
+        if (!msg.content) {
+          content.unshift({ type: "text", text: "Please analyze this image. Identify the crop, any disease or pest issues, and recommend treatments." });
+        }
+        return { role: msg.role, content };
+      }
+      return { role: msg.role, content: msg.content };
+    });
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -96,10 +125,10 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-2.5-pro",
         messages: [
           { role: "system", content: systemPrompt },
-          ...messages,
+          ...transformedMessages,
         ],
         stream: true,
       }),
