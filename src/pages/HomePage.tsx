@@ -95,7 +95,12 @@ export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const fetchProducts = useCallback(() => {
-    return supabase.from("products").select("*").eq("is_active", true).order("created_at", { ascending: false }).limit(8)
+    return supabase
+      .from("products")
+      .select("id,name,category,description,price,stock,image_url,is_active,created_at")
+      .eq("is_active", true)
+      .order("created_at", { ascending: false })
+      .limit(8)
       .then(({ data }) => setFeaturedProducts(data || []));
   }, []);
 
