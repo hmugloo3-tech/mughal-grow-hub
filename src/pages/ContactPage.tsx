@@ -1,0 +1,138 @@
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.5 } }),
+};
+
+export default function ContactPage() {
+  const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
+  const { toast } = useToast();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name.trim() || !form.message.trim()) {
+      toast({ title: "Please fill in required fields", variant: "destructive" });
+      return;
+    }
+    const whatsappMsg = `Hi! I'm ${form.name}.\n${form.email ? `Email: ${form.email}\n` : ""}${form.phone ? `Phone: ${form.phone}\n` : ""}\nMessage: ${form.message}`;
+    window.open(`https://wa.me/916006561732?text=${encodeURIComponent(whatsappMsg)}`, "_blank");
+    toast({ title: "Redirecting to WhatsApp!", description: "Your message will be sent via WhatsApp." });
+  };
+
+  return (
+    <div className="min-h-screen pt-20 md:pt-24">
+      <section className="hero-gradient py-12 md:py-16">
+        <div className="container-custom text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-3">Contact Us</h1>
+          <p className="text-primary-foreground/80 max-w-xl mx-auto">We'd love to hear from you. Reach out anytime!</p>
+        </div>
+      </section>
+
+      <div className="container-custom py-12">
+        <div className="grid lg:grid-cols-2 gap-12">
+          {/* Contact Info */}
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}>
+            <h2 className="text-2xl font-bold text-foreground mb-6">Get in Touch</h2>
+            <div className="space-y-6">
+              {[
+                { icon: MapPin, label: "Address", value: "Gadole, Kokernag, Anantnag\nKashmir - 192202" },
+                { icon: Phone, label: "Phone", value: "+91 6006561732", href: "tel:+916006561732" },
+                { icon: Mail, label: "Email", value: "info@mughalpesticides.com" },
+                { icon: Clock, label: "Hours", value: "Mon-Sat: 8:00 AM - 7:00 PM\nSunday: 9:00 AM - 2:00 PM" },
+              ].map((item) => (
+                <div key={item.label} className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center shrink-0">
+                    <item.icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground text-sm">{item.label}</p>
+                    {item.href ? (
+                      <a href={item.href} className="text-sm text-muted-foreground hover:text-primary transition-colors whitespace-pre-line">{item.value}</a>
+                    ) : (
+                      <p className="text-sm text-muted-foreground whitespace-pre-line">{item.value}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Map */}
+            <div className="mt-8 rounded-xl overflow-hidden shadow-lg">
+              <iframe
+                title="Mughal Pesticides Location"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d26520.1!2d75.28!3d33.62!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38e1a6d7e5d5e5e5%3A0x0!2sKokernag%2C%20Jammu%20and%20Kashmir!5e0!3m2!1sen!2sin!4v1"
+                width="100%"
+                height="250"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+          </motion.div>
+
+          {/* Form */}
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1}>
+            <div className="glass-card rounded-2xl p-8">
+              <h2 className="text-2xl font-bold text-foreground mb-2">Send a Message</h2>
+              <p className="text-sm text-muted-foreground mb-6">Your message will be sent via WhatsApp for quick response.</p>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-1 block">Name *</label>
+                  <Input
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    placeholder="Your name"
+                    maxLength={100}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-1 block">Email</label>
+                  <Input
+                    type="email"
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    placeholder="your@email.com"
+                    maxLength={255}
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-1 block">Phone</label>
+                  <Input
+                    type="tel"
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    placeholder="+91 XXXXXXXXXX"
+                    maxLength={15}
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-1 block">Message *</label>
+                  <Textarea
+                    value={form.message}
+                    onChange={(e) => setForm({ ...form, message: e.target.value })}
+                    placeholder="How can we help you?"
+                    rows={4}
+                    maxLength={1000}
+                    required
+                  />
+                </div>
+                <Button type="submit" size="lg" className="w-full bg-primary text-primary-foreground hover:bg-primary/90 gap-2 font-semibold">
+                  <Send className="h-4 w-4" /> Send via WhatsApp
+                </Button>
+              </form>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  );
+}
