@@ -41,10 +41,39 @@ export default function HomePage() {
   const { addItem } = useCart();
   const { toast } = useToast();
 
-  useEffect(() => {
-    supabase.from("products").select("*").eq("is_active", true).order("created_at", { ascending: false }).limit(4)
+  // Pull-to-refresh state
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [pullDistance, setPullDistance] = useState(0);
+  const touchStartY = useRef(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const fetchProducts = useCallback(() => {
+    return supabase.from("products").select("*").eq("is_active", true).order("created_at", { ascending: false }).limit(8)
       .then(({ data }) => setFeaturedProducts(data || []));
   }, []);
+
+  useEffect(() => { fetchProducts(); }, [fetchProducts]);
+
+  // Pull-to-refresh handlers
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (window.scrollY === 0) touchStartY.current = e.touches[0].clientY;
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (window.scrollY > 0 || isRefreshing) return;
+    const delta = e.touches[0].clientY - touchStartY.current;
+    if (delta > 0) setPullDistance(Math.min(delta * 0.4, 80));
+  }, [isRefreshing]);
+
+  const handleTouchEnd = useCallback(async () => {
+    if (pullDistance > 60) {
+      setIsRefreshing(true);
+      await fetchProducts();
+      toast({ title: "Refreshed!", description: "Latest products loaded." });
+      setIsRefreshing(false);
+    }
+    setPullDistance(0);
+  }, [pullDistance, fetchProducts, toast]);
 
   return (
     <div className="min-h-screen">
