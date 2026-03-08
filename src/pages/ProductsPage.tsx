@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Search, Filter, ShoppingCart, Check } from "lucide-react";
+import { Search, Filter, ShoppingCart, Check, Eye, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -106,33 +107,55 @@ export default function ProductsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filtered.map((product, i) => (
               <motion.div key={product.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
-                <div className="glass-card-hover rounded-xl overflow-hidden group h-full flex flex-col">
-                  <div className="aspect-square overflow-hidden bg-muted">
-                    <img src={product.image_url || fallbackImages[product.category] || productPesticide} alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
-                  </div>
+                <div className="glass-card rounded-xl overflow-hidden group h-full flex flex-col border border-transparent hover:border-primary/20 hover:shadow-[var(--shadow-hover)] transition-all duration-300 hover:-translate-y-1">
+                  {/* Image with zoom & quick view overlay */}
+                  <Link to={`/products/${product.id}`} className="block aspect-square overflow-hidden bg-muted relative">
+                    <img
+                      src={product.image_url || fallbackImages[product.category] || productPesticide}
+                      alt={product.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/20 transition-all duration-300 flex items-center justify-center">
+                      <span className="bg-background/90 text-foreground text-xs font-semibold px-4 py-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0 flex items-center gap-1.5">
+                        <Eye className="h-3.5 w-3.5" /> Quick View
+                      </span>
+                    </div>
+                    {product.stock <= 5 && product.stock > 0 && (
+                      <span className="absolute top-3 left-3 bg-secondary text-secondary-foreground text-[10px] font-bold px-2.5 py-1 rounded-full">
+                        Only {product.stock} left!
+                      </span>
+                    )}
+                  </Link>
+
                   <div className="p-5 flex flex-col flex-1">
                     <span className="text-xs font-medium text-primary bg-accent rounded-full px-3 py-1 self-start">
                       {categories.find(c => c.id === product.category)?.name || product.category}
                     </span>
-                    <h3 className="font-semibold text-foreground mt-3 mb-1">{product.name}</h3>
+                    <Link to={`/products/${product.id}`}>
+                      <h3 className="font-semibold text-foreground mt-3 mb-1 hover:text-primary transition-colors">{product.name}</h3>
+                    </Link>
                     <p className="text-sm text-muted-foreground line-clamp-2 mb-3 flex-1">{product.description}</p>
+
                     {product.benefits && product.benefits.length > 0 && (
                       <div className="flex flex-wrap gap-1 mb-3">
-                        {product.benefits.map((b) => (
+                        {product.benefits.slice(0, 3).map((b) => (
                           <span key={b} className="text-[10px] bg-accent text-accent-foreground px-2 py-0.5 rounded-full">✓ {b}</span>
                         ))}
                       </div>
                     )}
+
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-xl font-bold text-primary">₹{product.price}</span>
                       <span className={`text-xs font-medium ${product.stock > 0 ? "text-leaf" : "text-destructive"}`}>
                         {product.stock > 0 ? `${product.stock} in stock` : "Out of Stock"}
                       </span>
                     </div>
+
                     <div className="flex gap-2">
                       <Button
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.preventDefault();
                           addItem({ id: product.id, name: product.name, price: product.price, category: product.category, image_url: product.image_url || fallbackImages[product.category], stock: product.stock });
                           setAddedIds((prev) => new Set(prev).add(product.id));
                           toast({ title: `${product.name} added to cart!` });
@@ -143,6 +166,11 @@ export default function ProductsPage() {
                       >
                         {addedIds.has(product.id) ? <><Check className="h-4 w-4" /> Added</> : <><ShoppingCart className="h-4 w-4" /> Add to Cart</>}
                       </Button>
+                      <Link to={`/products/${product.id}`}>
+                        <Button variant="outline" size="icon" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </Link>
                     </div>
                   </div>
                 </div>
