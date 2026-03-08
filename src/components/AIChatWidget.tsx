@@ -55,8 +55,10 @@ const quickCategories = [
   },
 ];
 
-// Web Speech API helper
-const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+// Web Speech API helper - lazily accessed to avoid SSR/module-level issues
+function getSpeechRecognition(): any {
+  return (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition || null;
+}
 
 export default function AIChatWidget() {
   const [open, setOpen] = useState(false);
@@ -91,7 +93,8 @@ export default function AIChatWidget() {
 
   // Voice input
   const toggleVoice = useCallback(() => {
-    if (!SpeechRecognition) {
+    const SR = getSpeechRecognition();
+    if (!SR) {
       toast.error("Voice input not supported in this browser");
       return;
     }
@@ -102,7 +105,7 @@ export default function AIChatWidget() {
       return;
     }
 
-    const recognition = new SpeechRecognition();
+    const recognition = new SR();
     recognition.continuous = false;
     recognition.interimResults = true;
     recognition.lang = "en-IN";
@@ -548,7 +551,7 @@ export default function AIChatWidget() {
                 />
 
                 {/* Voice button */}
-                {SpeechRecognition && (
+                {getSpeechRecognition() && (
                   <button
                     type="button"
                     onClick={toggleVoice}
