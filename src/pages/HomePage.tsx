@@ -142,7 +142,7 @@ export default function HomePage() {
       <section className="relative min-h-[85vh] md:min-h-[90vh] flex items-center overflow-hidden">
         {isMobile ? (
           <div className="absolute inset-0">
-            <img src={heroPoster} alt="Agricultural farmland in Kashmir valley" className="w-full h-full object-cover" loading="eager" />
+            <img src={heroBg} alt="Agricultural farmland in Kashmir valley" className="w-full h-full object-cover" loading="eager" fetchPriority="high" decoding="async" />
             <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 via-foreground/65 to-foreground/30" />
           </div>
         ) : (
