@@ -391,96 +391,119 @@ export default function HomePage() {
             <p className="text-muted-foreground max-w-xl mx-auto">Expert agricultural guidance tailored for Kashmir's climate, crops, and farming practices.</p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-5 mt-10">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
             {([
               {
                 icon: Microscope,
                 title: "Crop Advisor",
                 subtitle: "AI-Powered Guidance",
-                desc: "Get personalized crop recommendations, disease diagnosis, and best practices based on Kashmir's soil and climate conditions.",
-                features: ["Crop selection help", "Disease identification", "Yield optimization tips"],
+                desc: "Get personalized crop recommendations and best practices for Kashmir's climate.",
+                features: ["Crop selection help", "Disease identification", "Yield optimization"],
                 link: "/crop-advisor",
                 cta: "Ask Crop Expert",
-                accent: "from-primary/15 to-primary/5",
-                iconBg: "bg-primary/15",
-                iconColor: "text-primary",
+                gradient: "from-emerald-500 to-teal-600",
+                glow: "group-hover:shadow-emerald-500/30",
+                iconGradient: "from-emerald-400 to-teal-500",
+                bgPattern: "radial-gradient(circle at 80% 20%, rgba(16,185,129,0.08) 0%, transparent 50%)",
               },
               {
                 icon: ScanLine,
                 title: "Disease Detector",
                 subtitle: "AI Leaf Scanner",
-                desc: "Upload a photo of any crop leaf and instantly detect diseases with AI. Get treatment advice, pesticide dosage, and organic alternatives.",
-                features: ["Photo-based diagnosis", "Treatment plans", "Severity assessment"],
+                desc: "Upload a crop leaf photo and instantly detect diseases with AI-powered analysis.",
+                features: ["Photo diagnosis", "Treatment plans", "Severity assessment"],
                 link: "/disease-detector",
                 cta: "Scan a Leaf",
-                accent: "from-orange-500/15 to-orange-500/5",
-                iconBg: "bg-orange-500/15",
-                iconColor: "text-orange-500",
+                gradient: "from-orange-500 to-red-500",
+                glow: "group-hover:shadow-orange-500/30",
+                iconGradient: "from-orange-400 to-red-500",
+                bgPattern: "radial-gradient(circle at 20% 80%, rgba(249,115,22,0.08) 0%, transparent 50%)",
               },
               {
                 icon: Bug,
                 title: "Pest Guide",
                 subtitle: "Identification & Treatment",
-                desc: "Identify common pests and diseases in Kashmir crops with detailed treatment protocols and preventive spray schedules.",
-                features: ["Visual pest identification", "Spray schedules", "Organic alternatives"],
+                desc: "Identify common pests in Kashmir crops with treatment protocols and spray schedules.",
+                features: ["Pest identification", "Spray schedules", "Organic options"],
                 link: "/pest-guide",
                 cta: "Identify Pests",
-                accent: "from-destructive/10 to-destructive/5",
-                iconBg: "bg-destructive/15",
-                iconColor: "text-destructive",
+                gradient: "from-red-500 to-rose-600",
+                glow: "group-hover:shadow-red-500/30",
+                iconGradient: "from-red-400 to-rose-500",
+                bgPattern: "radial-gradient(circle at 80% 80%, rgba(239,68,68,0.08) 0%, transparent 50%)",
               },
               {
                 icon: FlaskConical,
                 title: "Fertilizer Guide",
                 subtitle: "Dosage & Application",
-                desc: "Complete guide to using Urea, DAP, NPK, Potash, and organic fertilizers with correct dosage, timing, and precautions.",
-                features: ["NPK ratios explained", "Application methods", "Soil health tips"],
+                desc: "Complete guide to Urea, DAP, NPK, Potash with correct dosage and timing.",
+                features: ["NPK ratios", "Application methods", "Soil health"],
                 link: "/fertilizer-guide",
                 cta: "View Guide",
-                accent: "from-secondary/15 to-secondary/5",
-                iconBg: "bg-secondary/15",
-                iconColor: "text-secondary",
+                gradient: "from-blue-500 to-indigo-600",
+                glow: "group-hover:shadow-blue-500/30",
+                iconGradient: "from-blue-400 to-indigo-500",
+                bgPattern: "radial-gradient(circle at 20% 20%, rgba(59,130,246,0.08) 0%, transparent 50%)",
               },
               {
                 icon: CalendarDays,
                 title: "Seasonal Tips",
                 subtitle: "Kashmir Farming Calendar",
-                desc: "Month-by-month farming guide covering Spring (Sonth) to Winter (Wandh) with crop schedules, spray timing, and harvest planning.",
-                features: ["Season-wise crop plan", "Spray & fertilizer schedule", "Harvest timing"],
+                desc: "Month-by-month guide from Spring (Sonth) to Winter (Wandh) with crop schedules.",
+                features: ["Crop calendar", "Spray schedule", "Harvest timing"],
                 link: "/seasonal-tips",
                 cta: "View Calendar",
-                accent: "from-leaf/15 to-leaf/5",
-                iconBg: "bg-leaf/15",
-                iconColor: "text-leaf",
+                gradient: "from-violet-500 to-purple-600",
+                glow: "group-hover:shadow-violet-500/30",
+                iconGradient: "from-violet-400 to-purple-500",
+                bgPattern: "radial-gradient(circle at 50% 50%, rgba(139,92,246,0.08) 0%, transparent 50%)",
               },
             ] as const).map((module, i) => (
-              <motion.div key={module.title} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+              <motion.div
+                key={module.title}
+                custom={i}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeUp}
+                whileHover={{ y: -8, transition: { duration: 0.3 } }}
+              >
                 <Link to={module.link} className="block h-full">
-                  <div className={`relative h-full rounded-2xl border border-border bg-gradient-to-br ${module.accent} p-6 md:p-8 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group`}>
-                    {/* Header */}
-                    <div className="flex items-start gap-4 mb-4">
-                      <div className={`flex-shrink-0 w-12 h-12 rounded-xl ${module.iconBg} flex items-center justify-center`}>
-                        <module.icon className={`h-6 w-6 ${module.iconColor}`} />
+                  <div
+                    className={`group relative h-full rounded-2xl border border-border/50 bg-card overflow-hidden transition-all duration-500 hover:shadow-2xl ${module.glow} hover:border-transparent`}
+                    style={{ backgroundImage: module.bgPattern }}
+                  >
+                    {/* Top gradient bar */}
+                    <div className={`h-1.5 w-full bg-gradient-to-r ${module.gradient}`} />
+
+                    <div className="p-6 md:p-7">
+                      {/* Icon */}
+                      <div className={`relative inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br ${module.gradient} mb-5 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`}>
+                        <module.icon className="h-7 w-7 text-white" />
+                        <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${module.gradient} opacity-0 group-hover:opacity-40 blur-xl transition-opacity duration-500`} />
                       </div>
-                      <div>
-                        <h3 className="text-lg font-bold text-foreground">{module.title}</h3>
-                        <p className="text-xs font-medium text-muted-foreground">{module.subtitle}</p>
+
+                      {/* Title */}
+                      <h3 className="text-xl font-bold text-foreground mb-1">{module.title}</h3>
+                      <p className={`text-xs font-semibold bg-gradient-to-r ${module.gradient} bg-clip-text text-transparent mb-3`}>{module.subtitle}</p>
+
+                      {/* Description */}
+                      <p className="text-sm text-muted-foreground leading-relaxed mb-5">{module.desc}</p>
+
+                      {/* Feature pills */}
+                      <div className="flex flex-wrap gap-2 mb-6">
+                        {module.features.map(f => (
+                          <span key={f} className="text-[11px] font-semibold bg-muted/60 text-foreground/70 border border-border/50 px-3 py-1.5 rounded-full backdrop-blur-sm">
+                            {f}
+                          </span>
+                        ))}
                       </div>
-                    </div>
 
-                    {/* Description */}
-                    <p className="text-sm text-muted-foreground leading-relaxed mb-5">{module.desc}</p>
-
-                    {/* Feature pills */}
-                    <div className="flex flex-wrap gap-2 mb-6">
-                      {module.features.map(f => (
-                        <span key={f} className="text-[11px] font-medium bg-background/80 text-foreground/70 border border-border px-2.5 py-1 rounded-full">{f}</span>
-                      ))}
-                    </div>
-
-                    {/* CTA */}
-                    <div className="flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all">
-                      {module.cta} <ArrowRight className="h-4 w-4" />
+                      {/* CTA */}
+                      <div className={`inline-flex items-center gap-2 text-sm font-bold bg-gradient-to-r ${module.gradient} bg-clip-text text-transparent group-hover:gap-3 transition-all duration-300`}>
+                        {module.cta}
+                        <ArrowRight className={`h-4 w-4 transition-transform duration-300 group-hover:translate-x-1`} style={{ color: module.gradient.includes('emerald') ? '#10b981' : module.gradient.includes('orange') ? '#f97316' : module.gradient.includes('red') ? '#ef4444' : module.gradient.includes('blue') ? '#3b82f6' : '#8b5cf6' }} />
+                      </div>
                     </div>
                   </div>
                 </Link>
