@@ -320,18 +320,35 @@ export default function HomePage() {
           </motion.div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: ShieldCheck, title: "Genuine Products", desc: "100% authentic products from trusted brands with quality assurance." },
-              { icon: Leaf, title: "Expert Guidance", desc: "Professional advice on crop protection and fertilizer usage." },
-              { icon: Award, title: "Best Prices", desc: "Competitive pricing with seasonal discounts for farmers." },
-              { icon: Truck, title: "Home Delivery", desc: "Convenient delivery service across Kashmir region." },
+              { icon: ShieldCheck, title: "Genuine Products", desc: "100% authentic products from trusted brands with quality assurance.", gradient: "from-emerald-500 to-green-600", shadow: "shadow-emerald-500/25", iconBg: "bg-emerald-500/20", badge: "✓ Certified" },
+              { icon: Leaf, title: "Expert Guidance", desc: "Professional advice on crop protection and fertilizer usage.", gradient: "from-amber-500 to-yellow-600", shadow: "shadow-amber-500/25", iconBg: "bg-amber-500/20", badge: "🎓 Pro Advice" },
+              { icon: Award, title: "Best Prices", desc: "Competitive pricing with seasonal discounts for farmers.", gradient: "from-blue-500 to-cyan-600", shadow: "shadow-blue-500/25", iconBg: "bg-blue-500/20", badge: "💰 Save More" },
+              { icon: Truck, title: "Home Delivery", desc: "Convenient delivery service across Kashmir region.", gradient: "from-purple-500 to-pink-600", shadow: "shadow-purple-500/25", iconBg: "bg-purple-500/20", badge: "🚚 Fast" },
             ].map((item, i) => (
               <motion.div key={item.title} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-                className="glass-card-hover rounded-xl p-6 text-center">
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-accent mb-4">
-                  <item.icon className="h-7 w-7 text-primary" />
+                className="group relative rounded-2xl p-[2px] overflow-hidden"
+              >
+                {/* Animated gradient border */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-60 group-hover:opacity-100 transition-opacity duration-500`} />
+                
+                <div className="relative bg-card rounded-2xl p-6 text-center h-full flex flex-col items-center">
+                  {/* Badge */}
+                  <span className={`inline-block text-xs font-semibold px-3 py-1 rounded-full bg-gradient-to-r ${item.gradient} text-white mb-4`}>
+                    {item.badge}
+                  </span>
+                  
+                  {/* Icon with glow */}
+                  <div className={`relative inline-flex items-center justify-center w-16 h-16 rounded-2xl ${item.iconBg} mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                    <item.icon className={`h-8 w-8 bg-gradient-to-br ${item.gradient} bg-clip-text`} style={{ color: 'transparent', stroke: 'url(#grad)', filter: 'none' }} />
+                    <item.icon className={`h-8 w-8 absolute`} style={{ color: item.gradient.includes('emerald') ? '#10b981' : item.gradient.includes('amber') ? '#f59e0b' : item.gradient.includes('blue') ? '#3b82f6' : '#a855f7' }} />
+                  </div>
+                  
+                  <h3 className="font-bold text-foreground text-lg mb-2">{item.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                  
+                  {/* Bottom accent line */}
+                  <div className={`mt-4 h-1 w-12 rounded-full bg-gradient-to-r ${item.gradient} group-hover:w-20 transition-all duration-500`} />
                 </div>
-                <h3 className="font-semibold text-foreground mb-2">{item.title}</h3>
-                <p className="text-sm text-muted-foreground">{item.desc}</p>
               </motion.div>
             ))}
           </div>
