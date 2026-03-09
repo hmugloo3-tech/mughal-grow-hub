@@ -30,12 +30,6 @@ const fadeUp = {
   visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.5 } }),
 };
 
-const stats = [
-  { label: "Happy Farmers", value: "500+", icon: Users },
-  { label: "Products Available", value: "200+", icon: TrendingUp },
-  { label: "Years Experience", value: "10+", icon: Award },
-  { label: "Brands Stocked", value: "50+", icon: Star },
-];
 
 export default function HomePage() {
   const isMobile = useIsMobile();
@@ -211,20 +205,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="relative -mt-16 z-20">
-        <div className="container-custom">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {stats.map((stat, i) => (
-              <motion.div key={stat.label} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="glass-card rounded-xl p-6 text-center">
-                <stat.icon className="h-8 w-8 text-primary mx-auto mb-2" />
-                <p className="text-2xl md:text-3xl font-bold text-primary">{stat.value}</p>
-                <p className="text-sm text-muted-foreground">{stat.label}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Categories */}
       <section className="section-padding" aria-label="Product Categories">
