@@ -356,26 +356,67 @@ export default function HomePage() {
       </section>
 
       {/* Testimonials */}
-      <section className="section-padding bg-primary text-primary-foreground" aria-label="Customer Testimonials">
-        <div className="container-custom">
+      <section className="section-padding relative overflow-hidden" aria-label="Customer Testimonials">
+        {/* Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-900 via-green-900 to-teal-900" />
+        <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(16,185,129,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(20,184,166,0.1) 0%, transparent 50%)' }} />
+        
+        <div className="container-custom relative z-10">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">What Farmers Say</h2>
-            <p className="text-primary-foreground/70">Trusted by hundreds of farmers across Kashmir.</p>
+            <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 text-emerald-300 text-xs font-semibold mb-3 tracking-wide uppercase backdrop-blur-sm border border-white/10">
+              ⭐ Testimonials
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">What Farmers Say</h2>
+            <p className="text-white/60 max-w-lg mx-auto">Trusted by hundreds of farmers across Kashmir.</p>
           </motion.div>
           <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => (
-              <motion.div key={t.name} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-                className="bg-primary-foreground/10 backdrop-blur-sm rounded-xl p-6 border border-primary-foreground/20">
-                <div className="flex gap-1 mb-4">
-                  {[...Array(5)].map((_, j) => <Star key={j} className="h-4 w-4 fill-secondary text-secondary" />)}
-                </div>
-                <p className="text-primary-foreground/90 mb-4 text-sm leading-relaxed">"{t.text}"</p>
-                <div>
-                  <p className="font-semibold">{t.name}</p>
-                  <p className="text-xs text-primary-foreground/60">{t.role}</p>
-                </div>
-              </motion.div>
-            ))}
+            {testimonials.map((t, i) => {
+              const colors = [
+                { gradient: "from-emerald-500 to-teal-500", star: "text-emerald-400 fill-emerald-400", ring: "ring-emerald-500/20", avatar: "from-emerald-500 to-teal-600" },
+                { gradient: "from-amber-500 to-yellow-500", star: "text-amber-400 fill-amber-400", ring: "ring-amber-500/20", avatar: "from-amber-500 to-yellow-600" },
+                { gradient: "from-blue-500 to-cyan-500", star: "text-blue-400 fill-blue-400", ring: "ring-blue-500/20", avatar: "from-blue-500 to-cyan-600" },
+              ];
+              const color = colors[i % colors.length];
+              
+              return (
+                <motion.div
+                  key={t.name}
+                  custom={i}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={fadeUp}
+                  whileHover={{ y: -6, transition: { duration: 0.3 } }}
+                  className={`group relative bg-white/[0.06] backdrop-blur-md rounded-2xl p-6 md:p-7 border border-white/10 hover:border-white/20 transition-all duration-500 hover:shadow-2xl hover:bg-white/[0.1] ring-1 ${color.ring}`}
+                >
+                  {/* Quote mark */}
+                  <div className={`absolute -top-3 -left-1 text-5xl font-serif bg-gradient-to-r ${color.gradient} bg-clip-text text-transparent opacity-40`}>"</div>
+                  
+                  {/* Stars */}
+                  <div className="flex gap-1 mb-4 pt-2">
+                    {[...Array(5)].map((_, j) => (
+                      <motion.div key={j} initial={{ opacity: 0, scale: 0 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.3 + j * 0.08 }}>
+                        <Star className={`h-4 w-4 ${color.star}`} />
+                      </motion.div>
+                    ))}
+                  </div>
+                  
+                  {/* Text */}
+                  <p className="text-white/85 mb-6 text-sm leading-relaxed italic">"{t.text}"</p>
+                  
+                  {/* Author */}
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/10">
+                    <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${color.avatar} flex items-center justify-center text-white font-bold text-sm shadow-lg`}>
+                      {t.name.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-white text-sm">{t.name}</p>
+                      <p className="text-xs text-white/50">{t.role}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
