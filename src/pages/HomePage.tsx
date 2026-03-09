@@ -30,12 +30,6 @@ const fadeUp = {
   visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.5 } }),
 };
 
-const stats = [
-  { label: "Happy Farmers", value: "500+", icon: Users },
-  { label: "Products Available", value: "200+", icon: TrendingUp },
-  { label: "Years Experience", value: "10+", icon: Award },
-  { label: "Brands Stocked", value: "50+", icon: Star },
-];
 
 export default function HomePage() {
   const isMobile = useIsMobile();
