@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { CheckCircle, ArrowRight, Home } from "lucide-react";
+import { CheckCircle, ArrowRight, Home, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function OrderConfirmationPage() {
