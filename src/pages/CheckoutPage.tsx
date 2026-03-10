@@ -375,6 +375,21 @@ export default function CheckoutPage() {
                   </p>
                 </div>
 
+                <div className="glass-card rounded-xl p-4 mb-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <FileText className="h-4 w-4 text-primary" />
+                    <span className="font-semibold text-foreground text-sm">Order Notes (Optional)</span>
+                  </div>
+                  <textarea
+                    value={orderNotes}
+                    onChange={(e) => setOrderNotes(e.target.value)}
+                    placeholder="Any special instructions for your order..."
+                    maxLength={500}
+                    rows={3}
+                    className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
+                  />
+                </div>
+
                 <div className="flex justify-between mt-6">
                   <Button variant="outline" onClick={() => setStep(2)} className="gap-2"><ArrowLeft className="h-4 w-4" /> Back</Button>
                   <Button onClick={placeOrder} disabled={placing} className="bg-secondary text-secondary-foreground hover:bg-gold-dark gap-2 font-semibold" size="lg">
