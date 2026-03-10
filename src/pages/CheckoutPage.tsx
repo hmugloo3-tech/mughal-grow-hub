@@ -45,6 +45,7 @@ export default function CheckoutPage() {
   const [settings, setSettings] = useState<DeliverySettings>({ base_charge: 50, free_delivery_above: 1000, estimated_days_local: 2, estimated_days_district: 4 });
 
   // Coupon state
+  const [orderNotes, setOrderNotes] = useState("");
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount_type: string; discount_value: number } | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
