@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { MapPin, CreditCard, Truck, Plus, Check, ArrowRight, ArrowLeft, ShoppingBag, Tag } from "lucide-react";
+import { MapPin, CreditCard, Truck, Plus, Check, ArrowRight, ArrowLeft, ShoppingBag, Tag, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface Address {
@@ -45,6 +45,7 @@ export default function CheckoutPage() {
   const [settings, setSettings] = useState<DeliverySettings>({ base_charge: 50, free_delivery_above: 1000, estimated_days_local: 2, estimated_days_district: 4 });
 
   // Coupon state
+  const [orderNotes, setOrderNotes] = useState("");
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount_type: string; discount_value: number } | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
@@ -133,6 +134,7 @@ export default function CheckoutPage() {
       payment_status: "pending",
       estimated_delivery: estDate.toISOString().split("T")[0],
       status: "pending" as any,
+      notes: orderNotes.trim() || null,
     };
     const { data: order, error } = await supabase.from("orders").insert(orderData).select().single();
 
@@ -371,6 +373,21 @@ export default function CheckoutPage() {
                       ? `Within ${settings.estimated_days_local} days (local delivery)`
                       : `Within ${settings.estimated_days_district} days`}
                   </p>
+                </div>
+
+                <div className="glass-card rounded-xl p-4 mb-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <FileText className="h-4 w-4 text-primary" />
+                    <span className="font-semibold text-foreground text-sm">Order Notes (Optional)</span>
+                  </div>
+                  <textarea
+                    value={orderNotes}
+                    onChange={(e) => setOrderNotes(e.target.value)}
+                    placeholder="Any special instructions for your order..."
+                    maxLength={500}
+                    rows={3}
+                    className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
+                  />
                 </div>
 
                 <div className="flex justify-between mt-6">
