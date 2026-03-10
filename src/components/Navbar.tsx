@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ShoppingCart, Phone, User, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -30,33 +30,33 @@ export default function Navbar() {
   const { user, isAdmin } = useAuth();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-border/50">
-      <div className="container-custom flex items-center justify-between h-16 md:h-20">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-card/90 backdrop-blur-xl border-b border-border/40">
+      <div className="container-custom flex items-center justify-between h-16 md:h-[72px]">
         <Link to="/" className="flex items-center gap-2.5">
-          <img src={logo} alt="Mughal Pesticides" className="h-11 w-11 md:h-13 md:w-13 rounded-lg object-contain bg-white p-0.5 shadow-sm" />
+          <img src={logo} alt="Mughal Grow Hub" className="h-10 w-10 md:h-12 md:w-12 rounded-lg object-contain bg-primary p-1 shadow-sm" />
           <div className="hidden sm:block">
-            <h1 className="text-sm md:text-base font-bold text-primary leading-tight">Mughal Pesticides</h1>
-            <p className="text-[10px] md:text-xs text-muted-foreground leading-tight">& Fertilizer</p>
+            <h1 className="text-sm md:text-base font-bold text-foreground leading-tight tracking-tight font-display">Mughal Grow Hub</h1>
+            <p className="text-[10px] md:text-xs text-muted-foreground leading-tight tracking-widest uppercase">Agriculture Solutions</p>
           </div>
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden lg:flex items-center gap-1">
+        <div className="hidden lg:flex items-center gap-0.5">
           {navLinks.map((link) =>
             link.children ? (
               <div key={link.path} className="relative group">
-                <button className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                <button className={`px-3.5 py-2 rounded-lg text-[13px] font-medium transition-all duration-200 flex items-center gap-1 ${
                   link.children.some(c => location.pathname === c.path)
                     ? "bg-primary text-primary-foreground"
-                    : "text-foreground hover:bg-accent hover:text-accent-foreground"
+                    : "text-foreground/80 hover:text-foreground hover:bg-accent"
                 }`}>
                   {link.name} <ChevronDown className="h-3 w-3" />
                 </button>
-                <div className="absolute top-full left-0 mt-1 w-48 rounded-xl glass-card border border-border/50 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <div className="absolute top-full left-0 mt-1.5 w-52 rounded-xl bg-card border border-border shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                   {link.children.map(child => (
                     <Link key={child.path} to={child.path}
-                      className={`block px-4 py-2.5 text-sm font-medium transition-colors ${
-                        location.pathname === child.path ? "text-primary bg-accent" : "text-foreground hover:bg-accent hover:text-accent-foreground"
+                      className={`block px-4 py-2.5 text-sm transition-colors ${
+                        location.pathname === child.path ? "text-primary bg-accent font-medium" : "text-foreground/80 hover:bg-accent hover:text-foreground"
                       }`}>
                       {child.name}
                     </Link>
@@ -65,10 +65,10 @@ export default function Navbar() {
               </div>
             ) : (
               <Link key={link.path} to={link.path}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                className={`px-3.5 py-2 rounded-lg text-[13px] font-medium transition-all duration-200 ${
                   location.pathname === link.path
                     ? "bg-primary text-primary-foreground"
-                    : "text-foreground hover:bg-accent hover:text-accent-foreground"
+                    : "text-foreground/80 hover:text-foreground hover:bg-accent"
                 }`}>
                 {link.name}
               </Link>
@@ -76,13 +76,11 @@ export default function Navbar() {
           )}
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Theme Toggle */}
+        <div className="flex items-center gap-1.5">
           <ThemeToggle />
 
-          {/* Cart */}
           <Link to="/cart" className="relative p-2 rounded-lg hover:bg-accent transition-colors">
-            <ShoppingCart className="h-5 w-5 text-foreground" />
+            <ShoppingCart className="h-5 w-5 text-foreground/70" />
             {totalItems > 0 && (
               <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-secondary text-secondary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
                 {totalItems}
@@ -90,7 +88,6 @@ export default function Navbar() {
             )}
           </Link>
 
-          {/* User icon (logged in only) */}
           {user && (
             <Link to={isAdmin ? "/admin" : "/dashboard"} className="p-2 rounded-lg hover:bg-accent transition-colors">
               <User className="h-5 w-5 text-primary" />
@@ -111,17 +108,17 @@ export default function Navbar() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="lg:hidden overflow-hidden glass-card border-t border-border/50"
+            className="lg:hidden overflow-hidden bg-card border-t border-border/40"
           >
             <div className="container-custom py-4 flex flex-col gap-1">
               {navLinks.map((link) =>
                 link.children ? (
                   <div key={link.path}>
-                    <p className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{link.name}</p>
+                    <p className="px-4 py-2 text-[10px] font-semibold text-muted-foreground uppercase tracking-[0.15em]">{link.name}</p>
                     {link.children.map(child => (
                       <Link key={child.path} to={child.path} onClick={() => setOpen(false)}
-                        className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all block ${
-                          location.pathname === child.path ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-accent"
+                        className={`px-6 py-2.5 rounded-lg text-sm transition-all block ${
+                          location.pathname === child.path ? "bg-primary text-primary-foreground font-medium" : "text-foreground/80 hover:bg-accent"
                         }`}>
                         {child.name}
                       </Link>
@@ -130,14 +127,14 @@ export default function Navbar() {
                 ) : (
                   <Link key={link.path} to={link.path} onClick={() => setOpen(false)}
                     className={`px-4 py-3 rounded-lg text-sm font-medium transition-all ${
-                      location.pathname === link.path ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-accent"
+                      location.pathname === link.path ? "bg-primary text-primary-foreground" : "text-foreground/80 hover:bg-accent"
                     }`}>
                     {link.name}
                   </Link>
                 )
               )}
               {!user && (
-                <Link to="/auth" onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-accent">
+                <Link to="/auth" onClick={() => setOpen(false)} className="px-4 py-3 rounded-lg text-sm font-medium text-foreground/80 hover:bg-accent">
                   Sign In / Sign Up
                 </Link>
               )}
