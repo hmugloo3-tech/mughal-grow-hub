@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { MapPin, CreditCard, Truck, Plus, Check, ArrowRight, ArrowLeft, ShoppingBag, Tag } from "lucide-react";
+import { MapPin, CreditCard, Truck, Plus, Check, ArrowRight, ArrowLeft, ShoppingBag, Tag, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface Address {

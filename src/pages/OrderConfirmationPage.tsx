@@ -41,8 +41,13 @@ export default function OrderConfirmationPage() {
                 Track Your Order <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
-            <Link to="/">
+            <Link to="/track-order">
               <Button variant="outline" className="w-full gap-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+                <Package className="h-4 w-4" /> Track by Order ID
+              </Button>
+            </Link>
+            <Link to="/">
+              <Button variant="ghost" className="w-full gap-2 text-muted-foreground hover:text-primary">
                 <Home className="h-4 w-4" /> Continue Shopping
               </Button>
             </Link>
