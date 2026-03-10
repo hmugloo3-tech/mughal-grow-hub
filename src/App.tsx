@@ -58,6 +58,7 @@ function AppContent() {
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/order-confirmation/:id" element={<OrderConfirmationPage />} />
+          <Route path="/track-order" element={<TrackOrderPage />} />
           <Route path="/dashboard" element={<CustomerDashboard />} />
           <Route path="/admin/login" element={<AdminLoginPage />} />
           <Route path="/admin" element={<AdminDashboard />} />

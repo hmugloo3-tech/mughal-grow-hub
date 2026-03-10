@@ -134,6 +134,7 @@ export default function CheckoutPage() {
       payment_status: "pending",
       estimated_delivery: estDate.toISOString().split("T")[0],
       status: "pending" as any,
+      notes: orderNotes.trim() || null,
     };
     const { data: order, error } = await supabase.from("orders").insert(orderData).select().single();
 
