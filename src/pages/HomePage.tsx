@@ -1,22 +1,22 @@
-import { useState, useEffect, useCallback, useRef, memo } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ShieldCheck, Leaf, Award, Truck, Star, ArrowRight, Lightbulb, Users, TrendingUp, ShoppingCart, RefreshCw, Microscope, Bug, FlaskConical, CalendarDays, ScanLine } from "lucide-react";
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
+import { ShieldCheck, Leaf, Award, Truck, Star, ArrowRight, ShoppingCart, RefreshCw, Microscope, Bug, FlaskConical, CalendarDays, ScanLine, Quote, CheckCircle2, Users, Package, MapPin } from "lucide-react";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/hooks/useCart";
 import { useToast } from "@/hooks/use-toast";
-import { testimonials, categories, blogPosts } from "@/data/siteData";
+import { categories } from "@/data/siteData";
 import SEO from "@/components/SEO";
-import heroBg from "@/assets/hero-bg.jpg";
-import heroPoster from "@/assets/hero-poster.jpg";
+import heroNew from "@/assets/hero-new.jpg";
 import productPesticide from "@/assets/product-pesticide.jpg";
 import productFertilizer from "@/assets/product-fertilizer.jpg";
 import productSeeds from "@/assets/product-seeds.jpg";
 import productGrowth from "@/assets/product-growth.jpg";
 import productTools from "@/assets/product-tools.jpg";
+
 const categoryImages: Record<string, string> = {
   pesticides: productPesticide,
   fertilizers: productFertilizer,
@@ -27,9 +27,50 @@ const categoryImages: Record<string, string> = {
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.5 } }),
+  visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.08, duration: 0.5 } }),
 };
 
+const stagger = {
+  visible: { transition: { staggerChildren: 0.08 } },
+};
+
+const testimonials = [
+  {
+    name: "Abdul Rashid Dar",
+    role: "Apple Orchardist, Anantnag",
+    text: "Since switching to Mughal Grow Hub for my apple orchard sprays, I've seen a 40% reduction in fungal infections. Their expert team recommended the perfect combination.",
+    rating: 5,
+    crop: "🍎 Apple",
+  },
+  {
+    name: "Mohammad Ashraf Wani",
+    role: "Rice Farmer, Kokernag",
+    text: "The fertilizer recommendations from Mughal Grow Hub transformed my paddy yield. I went from 15 quintals to 22 quintals per kanal. Genuine products, honest advice.",
+    rating: 5,
+    crop: "🌾 Rice",
+  },
+  {
+    name: "Ghulam Nabi Sheikh",
+    role: "Vegetable Grower, Gadole",
+    text: "Best agriculture shop in the valley. They stock everything a farmer needs and the home delivery service saves me hours. My go-to for all seasonal requirements.",
+    rating: 5,
+    crop: "🥬 Vegetables",
+  },
+  {
+    name: "Fayaz Ahmad Bhat",
+    role: "Saffron Farmer, Pampore",
+    text: "Finding quality micronutrients for saffron was always a challenge. Mughal Grow Hub not only had them but guided me on the exact dosage for my soil type.",
+    rating: 5,
+    crop: "🌸 Saffron",
+  },
+];
+
+const stats = [
+  { number: "500+", label: "Happy Farmers", icon: Users },
+  { number: "200+", label: "Products", icon: Package },
+  { number: "15+", label: "Years Experience", icon: Award },
+  { number: "50km", label: "Delivery Range", icon: MapPin },
+];
 
 export default function HomePage() {
   const isMobile = useIsMobile();
@@ -37,51 +78,7 @@ export default function HomePage() {
   const { addItem } = useCart();
   const { toast } = useToast();
   const { scrollY } = useScroll();
-  const heroY = useTransform(scrollY, [0, 600], [0, isMobile ? 0 : 200]);
-  const heroScale = useTransform(scrollY, [0, 600], [1, isMobile ? 1 : 1.15]);
-
-  // Video reliability: force play on visibility and handle buffering
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [videoFailed, setVideoFailed] = useState(false);
-
-  useEffect(() => {
-    if (isMobile) return;
-
-    const video = videoRef.current;
-    if (!video) return;
-
-    const tryPlay = () => {
-      video.play().catch(() => setVideoFailed(true));
-    };
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          tryPlay();
-        } else {
-          video.pause();
-        }
-      },
-      { threshold: 0.25 }
-    );
-
-    observer.observe(video);
-
-    const onVisibilityChange = () => {
-      if (document.hidden) {
-        video.pause();
-      } else {
-        tryPlay();
-      }
-    };
-
-    document.addEventListener("visibilitychange", onVisibilityChange);
-
-    return () => {
-      observer.disconnect();
-      document.removeEventListener("visibilitychange", onVisibilityChange);
-    };
-  }, [isMobile]);
+  const heroY = useTransform(scrollY, [0, 600], [0, isMobile ? 0 : 150]);
 
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
@@ -98,7 +95,6 @@ export default function HomePage() {
       .then(({ data }) => {
         const products = data || [];
         setFeaturedProducts(products);
-        // Preload product images for instant rendering
         products.forEach((p) => {
           const src = p.image_url || categoryImages[p.category] || productPesticide;
           const img = new Image();
@@ -109,7 +105,6 @@ export default function HomePage() {
 
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
-  // Pull-to-refresh handlers
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     if (window.scrollY === 0) touchStartY.current = e.touches[0].clientY;
   }, []);
@@ -132,97 +127,101 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen" ref={containerRef} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
-      {/* Pull-to-refresh indicator */}
+      {/* Pull-to-refresh */}
       <div className="lg:hidden flex justify-center overflow-hidden transition-all duration-300" style={{ height: pullDistance }}>
-        <RefreshCw className={`h-6 w-6 text-primary mt-2 transition-transform ${isRefreshing ? "animate-spin" : ""} ${pullDistance > 60 ? "text-secondary" : ""}`} style={{ transform: `rotate(${pullDistance * 3}deg)` }} />
+        <RefreshCw className={`h-6 w-6 text-primary mt-2 transition-transform ${isRefreshing ? "animate-spin" : ""}`} style={{ transform: `rotate(${pullDistance * 3}deg)` }} />
       </div>
+
       <SEO
-        title="Mughal Pesticides & Fertilizer – Trusted Partner for Healthy Crops in Kashmir"
-        description="Premium pesticides, fertilizers, seeds & farming tools in Anantnag, Kashmir. Quality agricultural products for maximum crop yield. Order online with home delivery."
+        title="Mughal Grow Hub – Kashmir's Premier Agriculture Solutions"
+        description="Premium pesticides, fertilizers, seeds & farming tools. Trusted by 500+ farmers in Kashmir. Order online with home delivery across Anantnag."
       />
 
-      {/* Hero */}
-      <section className="relative min-h-[85vh] md:min-h-[90vh] flex items-center overflow-hidden">
-        {isMobile ? (
-          <div className="absolute inset-0">
-            <img src={heroBg} alt="Agricultural farmland in Kashmir valley" className="w-full h-full object-cover" loading="eager" fetchPriority="high" decoding="async" />
-            <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 via-foreground/65 to-foreground/30" />
-          </div>
-        ) : (
-          <motion.div
-            className="absolute inset-0"
-            style={{ y: heroY, scale: heroScale }}
-          >
-            {!videoFailed ? (
-              <video
-                ref={videoRef}
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="metadata"
-                poster={heroPoster}
-                className="w-full h-full object-cover"
-                onError={() => setVideoFailed(true)}
-              >
-                <source src="/hero-video.mp4" type="video/mp4" />
-              </video>
-            ) : (
-              <img src={heroPoster} alt="Agricultural farmland in Kashmir valley" className="w-full h-full object-cover" />
-            )}
-            <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 via-foreground/65 to-foreground/30 md:to-foreground/10" />
-          </motion.div>
-        )}
-        <div className="container-custom relative z-10 py-24 md:py-32">
-          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-2xl">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-secondary text-secondary-foreground text-xs md:text-sm font-semibold mb-4 md:mb-6">
-              🌾 Premium Agricultural Solutions
-            </span>
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-background leading-tight mb-4 md:mb-6">
-              Trusted Partner for <span className="text-secondary">Healthy Crops</span>
+      {/* ===== HERO ===== */}
+      <section className="relative min-h-[92vh] md:min-h-[95vh] flex items-end overflow-hidden">
+        <motion.div className="absolute inset-0" style={{ y: heroY }}>
+          <img src={heroNew} alt="Lush green terraced fields in Kashmir valley" className="w-full h-full object-cover" loading="eager" fetchPriority="high" />
+          <div className="absolute inset-0 bg-gradient-to-t from-foreground via-foreground/50 to-transparent" />
+        </motion.div>
+
+        <div className="container-custom relative z-10 pb-16 md:pb-24 pt-32">
+          <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }} className="max-w-3xl">
+            <div className="flex items-center gap-2 mb-5">
+              <span className="h-px w-8 bg-secondary" />
+              <span className="text-secondary text-xs font-semibold uppercase tracking-[0.2em]">Since 2010 · Anantnag, Kashmir</span>
+            </div>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-background leading-[1.1] mb-5">
+              Grow Better.<br />
+              <span className="text-secondary">Harvest More.</span>
             </h1>
-            <p className="text-base md:text-lg text-background/80 mb-6 md:mb-8 max-w-xl leading-relaxed">
-              Your one-stop destination for premium pesticides, fertilizers, seeds, and farming tools in Kashmir. Quality products for maximum yield.
+            <p className="text-base md:text-lg text-background/70 mb-8 max-w-xl leading-relaxed">
+              Kashmir's most trusted agriculture store. Premium pesticides, fertilizers, and expert guidance — everything your farm needs, delivered to your door.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Link to="/products">
-                <Button size="lg" className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-gold-dark font-semibold text-base px-8 gap-2 h-12 md:h-auto">
-                  Shop Now <ArrowRight className="h-4 w-4" />
+                <Button size="lg" className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold text-base px-8 gap-2 h-12 rounded-xl">
+                  Explore Products <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
-              <a href="tel:+916006561732" className="sm:hidden">
-                <Button size="lg" variant="outline" className="w-full border-primary-foreground text-primary-foreground bg-primary-foreground/10 hover:bg-primary-foreground/20 font-semibold text-base px-8 h-12 gap-2">
-                  📞 Call Now
-                </Button>
-              </a>
-              <Link to="/contact" className="hidden sm:block">
-                <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground bg-primary-foreground/10 hover:bg-primary-foreground/20 font-semibold text-base px-8">
-                  Contact Us
+              <Link to="/track-order">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto border-background/30 text-background bg-background/10 hover:bg-background/20 font-semibold text-base px-8 h-12 rounded-xl">
+                  Track Your Order
                 </Button>
               </Link>
             </div>
           </motion.div>
+
+          {/* Stats strip */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.7 }}
+            className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4"
+          >
+            {stats.map((stat) => (
+              <div key={stat.label} className="bg-background/10 backdrop-blur-sm border border-background/10 rounded-xl px-4 py-3 md:py-4 text-center">
+                <stat.icon className="h-5 w-5 text-secondary mx-auto mb-1.5" />
+                <p className="text-xl md:text-2xl font-bold text-background font-display">{stat.number}</p>
+                <p className="text-[11px] text-background/60 font-medium">{stat.label}</p>
+              </div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
+      {/* ===== TRUST MARQUEE ===== */}
+      <section className="bg-primary py-3 overflow-hidden">
+        <div className="flex animate-marquee whitespace-nowrap">
+          {[...Array(2)].map((_, idx) => (
+            <div key={idx} className="flex items-center gap-8 mr-8">
+              {["✓ 100% Genuine Products", "✓ Expert Farm Advisory", "✓ Home Delivery Available", "✓ 500+ Farmers Trust Us", "✓ 15+ Years Experience", "✓ Kashmir's Own Agri Store"].map((text) => (
+                <span key={text + idx} className="text-primary-foreground/90 text-sm font-medium tracking-wide">{text}</span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </section>
 
-      {/* Categories */}
+      {/* ===== CATEGORIES ===== */}
       <section className="section-padding" aria-label="Product Categories">
         <div className="container-custom">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Our Product Categories</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">Browse our wide range of agricultural products designed for maximum crop health and yield.</p>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="mb-12">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="h-px w-8 bg-secondary" />
+              <span className="text-secondary text-xs font-semibold uppercase tracking-[0.2em]">What We Offer</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">Shop by Category</h2>
           </motion.div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-5">
             {categories.map((cat, i) => (
-              <motion.div key={cat.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
-                <Link to="/products" className="glass-card-hover rounded-xl overflow-hidden block group">
-                  <div className="aspect-square overflow-hidden">
-                    <img src={categoryImages[cat.id]} alt={`${cat.name} products`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" width={300} height={300} />
-                  </div>
-                  <div className="p-4 text-center">
+              <motion.div key={cat.id} custom={i + 1} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+                <Link to="/products" className="group block relative rounded-2xl overflow-hidden aspect-[4/5]">
+                  <img src={categoryImages[cat.id]} alt={`${cat.name} products`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
                     <span className="text-2xl">{cat.icon}</span>
-                    <h3 className="font-semibold text-foreground text-sm mt-1">{cat.name}</h3>
+                    <h3 className="font-display font-semibold text-background text-sm mt-1">{cat.name}</h3>
                   </div>
                 </Link>
               </motion.div>
@@ -231,79 +230,48 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured Products */}
-      <section className="section-padding bg-accent/30" aria-label="Featured Products">
+      {/* ===== FEATURED PRODUCTS ===== */}
+      <section className="section-padding bg-muted/50" aria-label="Featured Products">
         <div className="container-custom">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Featured Products</h2>
-            <p className="text-muted-foreground">Top-selling products trusted by farmers across Kashmir.</p>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="flex items-end justify-between mb-10">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="h-px w-8 bg-secondary" />
+                <span className="text-secondary text-xs font-semibold uppercase tracking-[0.2em]">Best Sellers</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">Featured Products</h2>
+            </div>
+            <Link to="/products" className="hidden md:inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary/80 transition-colors">
+              View All <ArrowRight className="h-4 w-4" />
+            </Link>
           </motion.div>
-          {/* Mobile: Swipeable Carousel */}
+
+          {/* Mobile Carousel */}
           <div className="lg:hidden">
             <Carousel opts={{ align: "start", loop: true }} className="w-full">
               <CarouselContent className="-ml-3">
                 {featuredProducts.map((product) => (
-                  <CarouselItem key={product.id} className="pl-3 basis-[75%] sm:basis-1/2">
-                    <article className="glass-card-hover rounded-xl overflow-hidden group h-full">
-                      <Link to={`/products/${product.id}`} className="block">
-                        <div className="aspect-square overflow-hidden bg-muted">
-                          <img src={product.image_url || categoryImages[product.category] || productPesticide} alt={product.name} className="w-full h-full object-cover" loading="lazy" width={400} height={400} />
-                        </div>
-                      </Link>
-                      <div className="p-4">
-                        <span className="text-xs font-medium text-primary bg-accent rounded-full px-2.5 py-0.5">{categories.find(c => c.id === product.category)?.name}</span>
-                        <h3 className="font-semibold text-foreground mt-2 mb-1 text-sm line-clamp-1">{product.name}</h3>
-                        <div className="flex items-center justify-between mb-3">
-                          <span className="text-lg font-bold text-primary">₹{product.price}</span>
-                          <span className={`text-xs ${product.stock > 0 ? "text-leaf" : "text-destructive"}`}>
-                            {product.stock > 0 ? "In Stock" : "Out"}
-                          </span>
-                        </div>
-                        <Button size="sm" onClick={() => { addItem({ id: product.id, name: product.name, price: product.price, category: product.category, image_url: product.image_url || categoryImages[product.category], stock: product.stock }); toast({ title: `${product.name} added!` }); }}
-                          disabled={product.stock <= 0} className="w-full bg-primary text-primary-foreground gap-1.5 h-9 text-xs">
-                          <ShoppingCart className="h-3.5 w-3.5" /> Add to Cart
-                        </Button>
-                      </div>
-                    </article>
+                  <CarouselItem key={product.id} className="pl-3 basis-[72%] sm:basis-1/2">
+                    <ProductCard product={product} categoryImages={categoryImages} addItem={addItem} toast={toast} />
                   </CarouselItem>
                 ))}
               </CarouselContent>
             </Carousel>
-            <p className="text-center text-xs text-muted-foreground mt-3">← Swipe to see more →</p>
+            <p className="text-center text-xs text-muted-foreground mt-4">← Swipe to browse →</p>
           </div>
 
-          {/* Desktop: Grid */}
-          <div className="hidden lg:grid grid-cols-4 gap-6">
+          {/* Desktop Grid */}
+          <div className="hidden lg:grid grid-cols-4 gap-5">
             {featuredProducts.map((product, i) => (
-              <motion.div key={product.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
-                <article className="glass-card-hover rounded-xl overflow-hidden group">
-                  <Link to={`/products/${product.id}`} className="block">
-                    <div className="aspect-square overflow-hidden bg-muted">
-                      <img src={product.image_url || categoryImages[product.category] || productPesticide} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" width={400} height={400} />
-                    </div>
-                  </Link>
-                  <div className="p-5">
-                    <span className="text-xs font-medium text-primary bg-accent rounded-full px-3 py-1">{categories.find(c => c.id === product.category)?.name}</span>
-                    <h3 className="font-semibold text-foreground mt-3 mb-1">{product.name}</h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{product.description}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xl font-bold text-primary">₹{product.price}</span>
-                      <span className={`text-xs font-medium ${product.stock > 0 ? "text-leaf" : "text-destructive"}`}>
-                        {product.stock > 0 ? "In Stock" : "Out of Stock"}
-                      </span>
-                    </div>
-                    <Button onClick={() => { addItem({ id: product.id, name: product.name, price: product.price, category: product.category, image_url: product.image_url || categoryImages[product.category], stock: product.stock }); toast({ title: `${product.name} added to cart!` }); }}
-                      disabled={product.stock <= 0} className="w-full mt-4 bg-primary text-primary-foreground hover:bg-primary/90 gap-2">
-                      <ShoppingCart className="h-4 w-4" /> Add to Cart
-                    </Button>
-                  </div>
-                </article>
+              <motion.div key={product.id} custom={i + 1} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+                <ProductCard product={product} categoryImages={categoryImages} addItem={addItem} toast={toast} />
               </motion.div>
             ))}
           </div>
-          <div className="text-center mt-10">
+
+          <div className="text-center mt-10 md:hidden">
             <Link to="/products">
-              <Button variant="outline" size="lg" className="gap-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+              <Button variant="outline" className="gap-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground rounded-xl">
                 View All Products <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
@@ -311,43 +279,116 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Why Choose Us */}
+      {/* ===== WHY CHOOSE US ===== */}
       <section className="section-padding" aria-label="Why Choose Us">
         <div className="container-custom">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Why Choose Us?</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">We are committed to providing the best agricultural solutions for farmers.</p>
-          </motion.div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: ShieldCheck, title: "Genuine Products", desc: "100% authentic products from trusted brands with quality assurance.", gradient: "from-emerald-500 to-green-600", shadow: "shadow-emerald-500/25", iconBg: "bg-emerald-500/20", badge: "✓ Certified" },
-              { icon: Leaf, title: "Expert Guidance", desc: "Professional advice on crop protection and fertilizer usage.", gradient: "from-amber-500 to-yellow-600", shadow: "shadow-amber-500/25", iconBg: "bg-amber-500/20", badge: "🎓 Pro Advice" },
-              { icon: Award, title: "Best Prices", desc: "Competitive pricing with seasonal discounts for farmers.", gradient: "from-blue-500 to-cyan-600", shadow: "shadow-blue-500/25", iconBg: "bg-blue-500/20", badge: "💰 Save More" },
-              { icon: Truck, title: "Home Delivery", desc: "Convenient delivery service across Kashmir region.", gradient: "from-purple-500 to-pink-600", shadow: "shadow-purple-500/25", iconBg: "bg-purple-500/20", badge: "🚚 Fast" },
-            ].map((item, i) => (
-              <motion.div key={item.title} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-                className="group relative rounded-2xl p-[2px] overflow-hidden"
-              >
-                {/* Animated gradient border */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-60 group-hover:opacity-100 transition-opacity duration-500`} />
-                
-                <div className="relative bg-card rounded-2xl p-6 text-center h-full flex flex-col items-center">
-                  {/* Badge */}
-                  <span className={`inline-block text-xs font-semibold px-3 py-1 rounded-full bg-gradient-to-r ${item.gradient} text-white mb-4`}>
-                    {item.badge}
-                  </span>
-                  
-                  {/* Icon with glow */}
-                  <div className={`relative inline-flex items-center justify-center w-16 h-16 rounded-2xl ${item.iconBg} mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                    <item.icon className={`h-8 w-8 bg-gradient-to-br ${item.gradient} bg-clip-text`} style={{ color: 'transparent', stroke: 'url(#grad)', filter: 'none' }} />
-                    <item.icon className={`h-8 w-8 absolute`} style={{ color: item.gradient.includes('emerald') ? '#10b981' : item.gradient.includes('amber') ? '#f59e0b' : item.gradient.includes('blue') ? '#3b82f6' : '#a855f7' }} />
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="h-px w-8 bg-secondary" />
+                <span className="text-secondary text-xs font-semibold uppercase tracking-[0.2em]">Why Us</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-5">
+                Not Just a Shop.<br />Your Farm's <span className="text-secondary">Growth Partner.</span>
+              </h2>
+              <p className="text-muted-foreground leading-relaxed mb-8">
+                We don't just sell products — we understand Kashmir's unique agricultural challenges. From soil analysis to spray schedules, we guide you at every step.
+              </p>
+
+              <div className="space-y-5">
+                {[
+                  { icon: ShieldCheck, title: "100% Genuine Products", desc: "Direct from authorized distributors. No duplicates, no compromises." },
+                  { icon: Leaf, title: "Expert Crop Advisory", desc: "15+ years of local farming knowledge at your service — free of charge." },
+                  { icon: Award, title: "Best Market Prices", desc: "Competitive pricing with seasonal offers. We match any genuine quote." },
+                  { icon: Truck, title: "Home Delivery", desc: "Doorstep delivery across Anantnag district. Order via WhatsApp or online." },
+                ].map((item, i) => (
+                  <motion.div key={item.title} custom={i + 1} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+                    className="flex gap-4 items-start group"
+                  >
+                    <div className="shrink-0 w-11 h-11 rounded-xl bg-accent flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
+                      <item.icon className="h-5 w-5 text-primary group-hover:text-primary-foreground transition-colors" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-foreground text-sm mb-0.5">{item.title}</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Right side image grid */}
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={2} className="relative hidden lg:block">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-3">
+                  <div className="rounded-2xl overflow-hidden aspect-[3/4]">
+                    <img src={productFertilizer} alt="Fertilizer products" className="w-full h-full object-cover" loading="lazy" />
                   </div>
-                  
-                  <h3 className="font-bold text-foreground text-lg mb-2">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
-                  
-                  {/* Bottom accent line */}
-                  <div className={`mt-4 h-1 w-12 rounded-full bg-gradient-to-r ${item.gradient} group-hover:w-20 transition-all duration-500`} />
+                  <div className="rounded-2xl overflow-hidden aspect-square">
+                    <img src={productSeeds} alt="Seed products" className="w-full h-full object-cover" loading="lazy" />
+                  </div>
+                </div>
+                <div className="space-y-3 pt-8">
+                  <div className="rounded-2xl overflow-hidden aspect-square">
+                    <img src={productPesticide} alt="Pesticide products" className="w-full h-full object-cover" loading="lazy" />
+                  </div>
+                  <div className="rounded-2xl overflow-hidden aspect-[3/4]">
+                    <img src={productTools} alt="Farming tools" className="w-full h-full object-cover" loading="lazy" />
+                  </div>
+                </div>
+              </div>
+              {/* Floating badge */}
+              <div className="absolute -left-6 top-1/2 -translate-y-1/2 bg-card rounded-2xl shadow-lg p-4 border border-border">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center">
+                    <CheckCircle2 className="h-5 w-5 text-secondary" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-display font-bold text-foreground">98%</p>
+                    <p className="text-xs text-muted-foreground">Satisfaction Rate</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== FARMER TESTIMONIALS ===== */}
+      <section className="section-padding bg-primary" aria-label="Farmer Testimonials">
+        <div className="container-custom">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-center mb-12">
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <span className="h-px w-8 bg-secondary" />
+              <span className="text-secondary text-xs font-semibold uppercase tracking-[0.2em]">Testimonials</span>
+              <span className="h-px w-8 bg-secondary" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground">What Our Farmers Say</h2>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-5">
+            {testimonials.map((t, i) => (
+              <motion.div key={t.name} custom={i + 1} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+                className="bg-primary-foreground/5 border border-primary-foreground/10 rounded-2xl p-6 md:p-7 relative"
+              >
+                <Quote className="absolute top-5 right-5 h-8 w-8 text-primary-foreground/10" />
+                <div className="flex items-center gap-1 mb-4">
+                  {Array.from({ length: t.rating }).map((_, j) => (
+                    <Star key={j} className="h-4 w-4 fill-secondary text-secondary" />
+                  ))}
+                </div>
+                <p className="text-primary-foreground/80 text-sm leading-relaxed mb-5 italic">"{t.text}"</p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center text-secondary font-display font-bold text-sm">
+                      {t.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
+                    </div>
+                    <div>
+                      <p className="text-primary-foreground font-semibold text-sm">{t.name}</p>
+                      <p className="text-primary-foreground/50 text-xs">{t.role}</p>
+                    </div>
+                  </div>
+                  <span className="text-xs bg-primary-foreground/10 px-3 py-1 rounded-full text-primary-foreground/70">{t.crop}</span>
                 </div>
               </motion.div>
             ))}
@@ -355,132 +396,37 @@ export default function HomePage() {
         </div>
       </section>
 
-
-      {/* Farmer Advisory Hub */}
-      <section className="section-padding bg-accent/20" aria-label="Farmer Advisory Hub">
+      {/* ===== FARMER ADVISORY HUB ===== */}
+      <section className="section-padding" aria-label="Farmer Advisory Hub">
         <div className="container-custom">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-center mb-4">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-3 tracking-wide uppercase">
-              🧑‍🌾 Advisory Platform
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Farmer Resource Center</h2>
-            <p className="text-muted-foreground max-w-xl mx-auto">Expert agricultural guidance tailored for Kashmir's climate, crops, and farming practices.</p>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="mb-10">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="h-px w-8 bg-secondary" />
+              <span className="text-secondary text-xs font-semibold uppercase tracking-[0.2em]">Free Resources</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">Farmer Resource Center</h2>
+            <p className="text-muted-foreground max-w-xl">AI-powered tools and expert guides tailored for Kashmir's crops and climate.</p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {([
-              {
-                icon: Microscope,
-                title: "Crop Advisor",
-                subtitle: "AI-Powered Guidance",
-                desc: "Get personalized crop recommendations and best practices for Kashmir's climate.",
-                features: ["Crop selection help", "Disease identification", "Yield optimization"],
-                link: "/crop-advisor",
-                cta: "Ask Crop Expert",
-                gradient: "from-emerald-500 to-teal-600",
-                glow: "group-hover:shadow-emerald-500/30",
-                iconGradient: "from-emerald-400 to-teal-500",
-                bgPattern: "radial-gradient(circle at 80% 20%, rgba(16,185,129,0.08) 0%, transparent 50%)",
-              },
-              {
-                icon: ScanLine,
-                title: "Disease Detector",
-                subtitle: "AI Leaf Scanner",
-                desc: "Upload a crop leaf photo and instantly detect diseases with AI-powered analysis.",
-                features: ["Photo diagnosis", "Treatment plans", "Severity assessment"],
-                link: "/disease-detector",
-                cta: "Scan a Leaf",
-                gradient: "from-orange-500 to-red-500",
-                glow: "group-hover:shadow-orange-500/30",
-                iconGradient: "from-orange-400 to-red-500",
-                bgPattern: "radial-gradient(circle at 20% 80%, rgba(249,115,22,0.08) 0%, transparent 50%)",
-              },
-              {
-                icon: Bug,
-                title: "Pest Guide",
-                subtitle: "Identification & Treatment",
-                desc: "Identify common pests in Kashmir crops with treatment protocols and spray schedules.",
-                features: ["Pest identification", "Spray schedules", "Organic options"],
-                link: "/pest-guide",
-                cta: "Identify Pests",
-                gradient: "from-red-500 to-rose-600",
-                glow: "group-hover:shadow-red-500/30",
-                iconGradient: "from-red-400 to-rose-500",
-                bgPattern: "radial-gradient(circle at 80% 80%, rgba(239,68,68,0.08) 0%, transparent 50%)",
-              },
-              {
-                icon: FlaskConical,
-                title: "Fertilizer Guide",
-                subtitle: "Dosage & Application",
-                desc: "Complete guide to Urea, DAP, NPK, Potash with correct dosage and timing.",
-                features: ["NPK ratios", "Application methods", "Soil health"],
-                link: "/fertilizer-guide",
-                cta: "View Guide",
-                gradient: "from-blue-500 to-indigo-600",
-                glow: "group-hover:shadow-blue-500/30",
-                iconGradient: "from-blue-400 to-indigo-500",
-                bgPattern: "radial-gradient(circle at 20% 20%, rgba(59,130,246,0.08) 0%, transparent 50%)",
-              },
-              {
-                icon: CalendarDays,
-                title: "Seasonal Tips",
-                subtitle: "Kashmir Farming Calendar",
-                desc: "Month-by-month guide from Spring (Sonth) to Winter (Wandh) with crop schedules.",
-                features: ["Crop calendar", "Spray schedule", "Harvest timing"],
-                link: "/seasonal-tips",
-                cta: "View Calendar",
-                gradient: "from-violet-500 to-purple-600",
-                glow: "group-hover:shadow-violet-500/30",
-                iconGradient: "from-violet-400 to-purple-500",
-                bgPattern: "radial-gradient(circle at 50% 50%, rgba(139,92,246,0.08) 0%, transparent 50%)",
-              },
+              { icon: Microscope, title: "Crop Advisor", desc: "Get personalized crop recommendations and best practices.", link: "/crop-advisor", color: "bg-primary" },
+              { icon: ScanLine, title: "Disease Detector", desc: "Upload a leaf photo and detect diseases with AI analysis.", link: "/disease-detector", color: "bg-secondary" },
+              { icon: Bug, title: "Pest Guide", desc: "Identify pests with treatment protocols and spray schedules.", link: "/pest-guide", color: "bg-primary" },
+              { icon: FlaskConical, title: "Fertilizer Guide", desc: "Complete dosage and application guide for all fertilizers.", link: "/fertilizer-guide", color: "bg-secondary" },
+              { icon: CalendarDays, title: "Seasonal Tips", desc: "Month-by-month farming calendar for Kashmir climate.", link: "/seasonal-tips", color: "bg-primary" },
             ] as const).map((module, i) => (
-              <motion.div
-                key={module.title}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUp}
-                whileHover={{ y: -8, transition: { duration: 0.3 } }}
-              >
-                <Link to={module.link} className="block h-full">
-                  <div
-                    className={`group relative h-full rounded-2xl border border-border/50 bg-card overflow-hidden transition-all duration-500 hover:shadow-2xl ${module.glow} hover:border-transparent`}
-                    style={{ backgroundImage: module.bgPattern }}
-                  >
-                    {/* Top gradient bar */}
-                    <div className={`h-1.5 w-full bg-gradient-to-r ${module.gradient}`} />
-
-                    <div className="p-6 md:p-7">
-                      {/* Icon */}
-                      <div className={`relative inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br ${module.gradient} mb-5 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`}>
-                        <module.icon className="h-7 w-7 text-white" />
-                        <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${module.gradient} opacity-0 group-hover:opacity-40 blur-xl transition-opacity duration-500`} />
-                      </div>
-
-                      {/* Title */}
-                      <h3 className="text-xl font-bold text-foreground mb-1">{module.title}</h3>
-                      <p className={`text-xs font-semibold bg-gradient-to-r ${module.gradient} bg-clip-text text-transparent mb-3`}>{module.subtitle}</p>
-
-                      {/* Description */}
-                      <p className="text-sm text-muted-foreground leading-relaxed mb-5">{module.desc}</p>
-
-                      {/* Feature pills */}
-                      <div className="flex flex-wrap gap-2 mb-6">
-                        {module.features.map(f => (
-                          <span key={f} className="text-[11px] font-semibold bg-muted/60 text-foreground/70 border border-border/50 px-3 py-1.5 rounded-full backdrop-blur-sm">
-                            {f}
-                          </span>
-                        ))}
-                      </div>
-
-                      {/* CTA */}
-                      <div className={`inline-flex items-center gap-2 text-sm font-bold bg-gradient-to-r ${module.gradient} bg-clip-text text-transparent group-hover:gap-3 transition-all duration-300`}>
-                        {module.cta}
-                        <ArrowRight className={`h-4 w-4 transition-transform duration-300 group-hover:translate-x-1`} style={{ color: module.gradient.includes('emerald') ? '#10b981' : module.gradient.includes('orange') ? '#f97316' : module.gradient.includes('red') ? '#ef4444' : module.gradient.includes('blue') ? '#3b82f6' : '#8b5cf6' }} />
-                      </div>
-                    </div>
+              <motion.div key={module.title} custom={i + 1} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+                <Link to={module.link} className="group flex items-start gap-4 p-5 rounded-2xl border border-border bg-card hover:shadow-lg hover:border-primary/20 transition-all duration-300">
+                  <div className={`shrink-0 w-12 h-12 rounded-xl ${module.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                    <module.icon className="h-6 w-6 text-primary-foreground" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-display font-semibold text-foreground mb-1">{module.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{module.desc}</p>
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-primary mt-2 group-hover:gap-2 transition-all">
+                      Explore <ArrowRight className="h-3 w-3" />
+                    </span>
                   </div>
                 </Link>
               </motion.div>
@@ -489,44 +435,91 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Newsletter CTA */}
-      <section className="section-padding bg-accent/30" aria-label="Subscribe">
+      {/* ===== CTA ===== */}
+      <section className="section-padding bg-muted/50" aria-label="Call to Action">
         <div className="container-custom">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}
-            className="glass-card rounded-2xl p-8 md:p-12 text-center max-w-2xl mx-auto">
-            <Lightbulb className="h-10 w-10 text-secondary mx-auto mb-4" />
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">Stay Updated</h2>
-            <p className="text-muted-foreground mb-6">Get the latest farming tips, product updates, and seasonal offers delivered to your phone.</p>
-            <a href="https://wa.me/916006561732?text=Hi! I want to subscribe to your updates." target="_blank" rel="noopener noreferrer">
-              <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 font-semibold">
-                Subscribe via WhatsApp <ArrowRight className="h-4 w-4" />
-              </Button>
-            </a>
+            className="relative bg-primary rounded-3xl p-8 md:p-14 overflow-hidden text-center"
+          >
+            <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-secondary/10 rounded-full translate-y-1/2 -translate-x-1/2" />
+            <div className="relative z-10">
+              <h2 className="text-2xl md:text-4xl font-display font-bold text-primary-foreground mb-4">
+                Ready to Transform Your Yield?
+              </h2>
+              <p className="text-primary-foreground/70 max-w-lg mx-auto mb-8 leading-relaxed">
+                Join 500+ farmers who trust Mughal Grow Hub for premium agricultural products and expert guidance.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link to="/products">
+                  <Button size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold px-8 gap-2 rounded-xl">
+                    Shop Now <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+                <a href="https://wa.me/916006561732?text=Hi! I need help choosing products for my farm." target="_blank" rel="noopener noreferrer">
+                  <Button size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground bg-primary-foreground/10 hover:bg-primary-foreground/20 font-semibold px-8 rounded-xl">
+                    WhatsApp Us
+                  </Button>
+                </a>
+              </div>
+            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* JSON-LD Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Store",
-            name: "Mughal Pesticides & Fertilizer",
-            description: "Premium pesticides, fertilizers, seeds & farming tools in Kashmir",
-            address: {
-              "@type": "PostalAddress",
-              addressLocality: "Anantnag",
-              addressRegion: "Jammu & Kashmir",
-              addressCountry: "IN",
-            },
-            telephone: "+916006561732",
-            priceRange: "₹",
-            openingHours: "Mo-Sa 09:00-19:00",
-          }),
-        }}
-      />
+      {/* JSON-LD */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Store",
+          name: "Mughal Grow Hub",
+          description: "Premium pesticides, fertilizers, seeds & farming tools in Kashmir",
+          address: { "@type": "PostalAddress", addressLocality: "Anantnag", addressRegion: "Jammu & Kashmir", addressCountry: "IN" },
+          telephone: "+916006561732",
+          priceRange: "₹",
+          openingHours: "Mo-Sa 09:00-19:00",
+        }),
+      }} />
     </div>
+  );
+}
+
+/* ===== Product Card Component ===== */
+function ProductCard({ product, categoryImages, addItem, toast }: any) {
+  return (
+    <article className="bg-card border border-border rounded-2xl overflow-hidden group hover:shadow-lg hover:border-primary/20 transition-all duration-300">
+      <Link to={`/products/${product.id}`} className="block">
+        <div className="aspect-square overflow-hidden bg-muted">
+          <img
+            src={product.image_url || categoryImages[product.category] || "/placeholder.svg"}
+            alt={product.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            loading="lazy"
+          />
+        </div>
+      </Link>
+      <div className="p-4 md:p-5">
+        <span className="text-[10px] font-semibold text-primary uppercase tracking-widest">{categories.find(c => c.id === product.category)?.name}</span>
+        <h3 className="font-display font-semibold text-foreground mt-1.5 mb-2 text-sm md:text-base line-clamp-1">{product.name}</h3>
+        <p className="text-xs text-muted-foreground line-clamp-2 mb-3 hidden md:block">{product.description}</p>
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-lg md:text-xl font-bold text-foreground font-display">₹{product.price}</span>
+          <span className={`text-[10px] font-semibold uppercase tracking-wider ${product.stock > 0 ? "text-leaf" : "text-destructive"}`}>
+            {product.stock > 0 ? "In Stock" : "Out of Stock"}
+          </span>
+        </div>
+        <Button
+          size="sm"
+          onClick={() => {
+            addItem({ id: product.id, name: product.name, price: product.price, category: product.category, image_url: product.image_url || categoryImages[product.category], stock: product.stock });
+            toast({ title: `${product.name} added to cart!` });
+          }}
+          disabled={product.stock <= 0}
+          className="w-full bg-primary text-primary-foreground gap-1.5 h-9 text-xs rounded-xl"
+        >
+          <ShoppingCart className="h-3.5 w-3.5" /> Add to Cart
+        </Button>
+      </div>
+    </article>
   );
 }
