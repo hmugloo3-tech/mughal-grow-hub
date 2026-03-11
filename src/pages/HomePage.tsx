@@ -279,122 +279,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== WHY CHOOSE US ===== */}
-      <section className="section-padding" aria-label="Why Choose Us">
-        <div className="container-custom">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}>
-              <div className="flex items-center gap-2 mb-3">
-                <span className="h-px w-8 bg-secondary" />
-                <span className="text-secondary text-xs font-semibold uppercase tracking-[0.2em]">Why Us</span>
-              </div>
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-5">
-                Not Just a Shop.<br />Your Farm's <span className="text-secondary">Growth Partner.</span>
-              </h2>
-              <p className="text-muted-foreground leading-relaxed mb-8">
-                We don't just sell products — we understand Kashmir's unique agricultural challenges. From soil analysis to spray schedules, we guide you at every step.
-              </p>
-
-              <div className="space-y-5">
-                {[
-                  { icon: ShieldCheck, title: "100% Genuine Products", desc: "Direct from authorized distributors. No duplicates, no compromises." },
-                  { icon: Leaf, title: "Expert Crop Advisory", desc: "15+ years of local farming knowledge at your service — free of charge." },
-                  { icon: Award, title: "Best Market Prices", desc: "Competitive pricing with seasonal offers. We match any genuine quote." },
-                  { icon: Truck, title: "Home Delivery", desc: "Doorstep delivery across Anantnag district. Order via WhatsApp or online." },
-                ].map((item, i) => (
-                  <motion.div key={item.title} custom={i + 1} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-                    className="flex gap-4 items-start group"
-                  >
-                    <div className="shrink-0 w-11 h-11 rounded-xl bg-accent flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
-                      <item.icon className="h-5 w-5 text-primary group-hover:text-primary-foreground transition-colors" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground text-sm mb-0.5">{item.title}</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* Right side image grid */}
-            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={2} className="relative hidden lg:block">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-3">
-                  <div className="rounded-2xl overflow-hidden aspect-[3/4]">
-                    <img src={productFertilizer} alt="Fertilizer products" className="w-full h-full object-cover" loading="lazy" />
-                  </div>
-                  <div className="rounded-2xl overflow-hidden aspect-square">
-                    <img src={productSeeds} alt="Seed products" className="w-full h-full object-cover" loading="lazy" />
-                  </div>
-                </div>
-                <div className="space-y-3 pt-8">
-                  <div className="rounded-2xl overflow-hidden aspect-square">
-                    <img src={productPesticide} alt="Pesticide products" className="w-full h-full object-cover" loading="lazy" />
-                  </div>
-                  <div className="rounded-2xl overflow-hidden aspect-[3/4]">
-                    <img src={productTools} alt="Farming tools" className="w-full h-full object-cover" loading="lazy" />
-                  </div>
-                </div>
-              </div>
-              {/* Floating badge */}
-              <div className="absolute -left-6 top-1/2 -translate-y-1/2 bg-card rounded-2xl shadow-lg p-4 border border-border">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center">
-                    <CheckCircle2 className="h-5 w-5 text-secondary" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-display font-bold text-foreground">98%</p>
-                    <p className="text-xs text-muted-foreground">Satisfaction Rate</p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== FARMER TESTIMONIALS ===== */}
-      <section className="section-padding bg-primary" aria-label="Farmer Testimonials">
-        <div className="container-custom">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-center mb-12">
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <span className="h-px w-8 bg-secondary" />
-              <span className="text-secondary text-xs font-semibold uppercase tracking-[0.2em]">Testimonials</span>
-              <span className="h-px w-8 bg-secondary" />
-            </div>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground">What Our Farmers Say</h2>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 gap-5">
-            {testimonials.map((t, i) => (
-              <motion.div key={t.name} custom={i + 1} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-                className="bg-primary-foreground/5 border border-primary-foreground/10 rounded-2xl p-6 md:p-7 relative"
-              >
-                <Quote className="absolute top-5 right-5 h-8 w-8 text-primary-foreground/10" />
-                <div className="flex items-center gap-1 mb-4">
-                  {Array.from({ length: t.rating }).map((_, j) => (
-                    <Star key={j} className="h-4 w-4 fill-secondary text-secondary" />
-                  ))}
-                </div>
-                <p className="text-primary-foreground/80 text-sm leading-relaxed mb-5 italic">"{t.text}"</p>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center text-secondary font-display font-bold text-sm">
-                      {t.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
-                    </div>
-                    <div>
-                      <p className="text-primary-foreground font-semibold text-sm">{t.name}</p>
-                      <p className="text-primary-foreground/50 text-xs">{t.role}</p>
-                    </div>
-                  </div>
-                  <span className="text-xs bg-primary-foreground/10 px-3 py-1 rounded-full text-primary-foreground/70">{t.crop}</span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ===== FARMER ADVISORY HUB ===== */}
       <section className="section-padding" aria-label="Farmer Advisory Hub">
@@ -436,33 +320,63 @@ export default function HomePage() {
       </section>
 
       {/* ===== CTA ===== */}
-      <section className="section-padding bg-muted/50" aria-label="Call to Action">
-        <div className="container-custom">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}
-            className="relative bg-primary rounded-3xl p-8 md:p-14 overflow-hidden text-center"
-          >
-            <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/10 rounded-full -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-secondary/10 rounded-full translate-y-1/2 -translate-x-1/2" />
-            <div className="relative z-10">
-              <h2 className="text-2xl md:text-4xl font-display font-bold text-primary-foreground mb-4">
-                Ready to Transform Your Yield?
-              </h2>
-              <p className="text-primary-foreground/70 max-w-lg mx-auto mb-8 leading-relaxed">
-                Join 500+ farmers who trust Mughal Grow Hub for premium agricultural products and expert guidance.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Link to="/products">
-                  <Button size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold px-8 gap-2 rounded-xl">
-                    Shop Now <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-                <a href="https://wa.me/916006561732?text=Hi! I need help choosing products for my farm." target="_blank" rel="noopener noreferrer">
-                  <Button size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground bg-primary-foreground/10 hover:bg-primary-foreground/20 font-semibold px-8 rounded-xl">
-                    WhatsApp Us
-                  </Button>
-                </a>
-              </div>
+      <section className="py-20 md:py-28 relative overflow-hidden" aria-label="Call to Action">
+        {/* Vivid gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-[hsl(158,45%,18%)] to-[hsl(160,30%,10%)]" />
+        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, hsl(28 75% 52% / 0.4) 0%, transparent 50%), radial-gradient(circle at 80% 30%, hsl(142 50% 36% / 0.3) 0%, transparent 50%), radial-gradient(circle at 60% 80%, hsl(28 75% 52% / 0.3) 0%, transparent 40%)' }} />
+        
+        {/* Animated decorative elements */}
+        <motion.div animate={{ y: [0, -15, 0], rotate: [0, 5, 0] }} transition={{ duration: 6, repeat: Infinity }} className="absolute top-10 right-[15%] w-20 h-20 rounded-full border-2 border-secondary/30" />
+        <motion.div animate={{ y: [0, 10, 0], rotate: [0, -3, 0] }} transition={{ duration: 5, repeat: Infinity, delay: 1 }} className="absolute bottom-16 left-[10%] w-14 h-14 rounded-2xl bg-secondary/15 rotate-12" />
+        <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 4, repeat: Infinity }} className="absolute top-1/2 left-[5%] w-3 h-3 rounded-full bg-secondary/40" />
+        <motion.div animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 3, repeat: Infinity, delay: 0.5 }} className="absolute top-[30%] right-[8%] w-2 h-2 rounded-full bg-leaf/40" />
+
+        <div className="container-custom relative z-10">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-center max-w-2xl mx-auto">
+            <motion.div initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ type: "spring", delay: 0.2 }}
+              className="inline-flex items-center gap-2 bg-secondary/20 border border-secondary/30 rounded-full px-5 py-2 mb-6"
+            >
+              <Leaf className="h-4 w-4 text-secondary" />
+              <span className="text-secondary text-sm font-semibold">Join 500+ Happy Farmers</span>
+            </motion.div>
+
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-display font-bold text-primary-foreground mb-5 leading-[1.15]">
+              Ready to Transform{" "}
+              <span className="relative inline-block">
+                <span className="relative z-10 text-secondary">Your Yield</span>
+                <motion.span initial={{ width: 0 }} whileInView={{ width: "100%" }} viewport={{ once: true }} transition={{ delay: 0.6, duration: 0.5 }}
+                  className="absolute bottom-1 left-0 h-3 bg-secondary/20 rounded-full -z-0"
+                />
+              </span>
+              ?
+            </h2>
+
+            <p className="text-lg md:text-xl text-primary-foreground/70 mb-10 leading-relaxed">
+              Premium products. Expert guidance. Doorstep delivery.<br className="hidden md:block" />
+              Everything your farm needs — in one place.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/products">
+                <Button size="lg" className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 font-bold text-base px-10 gap-2.5 h-14 rounded-2xl shadow-lg shadow-secondary/30 hover:shadow-xl hover:shadow-secondary/40 transition-all duration-300 hover:scale-105">
+                  <ShoppingCart className="h-5 w-5" /> Shop Now
+                </Button>
+              </Link>
+              <a href="https://wa.me/916006561732?text=Hi! I need help choosing products for my farm." target="_blank" rel="noopener noreferrer">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto border-2 border-primary-foreground/30 text-primary-foreground bg-primary-foreground/5 hover:bg-primary-foreground/15 font-bold text-base px-10 h-14 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105">
+                  💬 WhatsApp Us
+                </Button>
+              </a>
             </div>
+
+            {/* Trust indicators */}
+            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.8 }}
+              className="flex flex-wrap items-center justify-center gap-6 mt-10 text-primary-foreground/50"
+            >
+              {["🛡️ Genuine Products", "🚚 Free Delivery*", "📞 24/7 Support"].map((item) => (
+                <span key={item} className="text-xs md:text-sm font-medium">{item}</span>
+              ))}
+            </motion.div>
           </motion.div>
         </div>
       </section>
