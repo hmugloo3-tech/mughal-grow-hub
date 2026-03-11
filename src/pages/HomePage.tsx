@@ -279,18 +279,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== WHY CHOOSE US ===== */}
-      <section className="section-padding" aria-label="Why Choose Us">
-        <div className="container-custom">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}>
-              <div className="flex items-center gap-2 mb-3">
-                <span className="h-px w-8 bg-secondary" />
-                <span className="text-secondary text-xs font-semibold uppercase tracking-[0.2em]">Why Us</span>
-              </div>
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-5">
-                Not Just a Shop.<br />Your Farm's <span className="text-secondary">Growth Partner.</span>
-              </h2>
+
+
               <p className="text-muted-foreground leading-relaxed mb-8">
                 We don't just sell products — we understand Kashmir's unique agricultural challenges. From soil analysis to spray schedules, we guide you at every step.
               </p>
