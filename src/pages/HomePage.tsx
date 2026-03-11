@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ShieldCheck, Leaf, Award, Truck, Star, ArrowRight, ShoppingCart, RefreshCw, Microscope, Bug, FlaskConical, CalendarDays, ScanLine, Quote, CheckCircle2, Users, Package, MapPin } from "lucide-react";
+import { Leaf, Award, ArrowRight, ShoppingCart, RefreshCw, Microscope, Bug, FlaskConical, CalendarDays, ScanLine, Users, Package, MapPin } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
