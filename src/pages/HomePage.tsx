@@ -280,12 +280,6 @@ export default function HomePage() {
 
         <div className="container-custom relative z-10">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-center max-w-2xl mx-auto">
-            <motion.div initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ type: "spring", delay: 0.2 }}
-              className="inline-flex items-center gap-2 bg-secondary/20 border border-secondary/30 rounded-full px-5 py-2 mb-6"
-            >
-              <Leaf className="h-4 w-4 text-secondary" />
-              <span className="text-secondary text-sm font-semibold">Join 500+ Happy Farmers</span>
-            </motion.div>
 
             <h2 className="text-3xl md:text-5xl lg:text-6xl font-display font-bold text-primary-foreground mb-5 leading-[1.15]">
               Ready to Transform{" "}
