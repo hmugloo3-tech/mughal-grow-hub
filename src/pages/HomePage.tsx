@@ -33,12 +33,6 @@ const fadeUp = {
 
 
 
-const stats = [
-  { number: "500+", label: "Happy Farmers", icon: Users },
-  { number: "200+", label: "Products", icon: Package },
-  { number: "15+", label: "Years Experience", icon: Award },
-  { number: "50km", label: "Delivery Range", icon: MapPin },
-];
 
 export default function HomePage() {
   const isMobile = useIsMobile();
