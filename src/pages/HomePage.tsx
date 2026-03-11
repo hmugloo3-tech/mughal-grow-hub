@@ -30,40 +30,8 @@ const fadeUp = {
   visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.08, duration: 0.5 } }),
 };
 
-const stagger = {
-  visible: { transition: { staggerChildren: 0.08 } },
-};
 
-const testimonials = [
-  {
-    name: "Abdul Rashid Dar",
-    role: "Apple Orchardist, Anantnag",
-    text: "Since switching to Mughal Grow Hub for my apple orchard sprays, I've seen a 40% reduction in fungal infections. Their expert team recommended the perfect combination.",
-    rating: 5,
-    crop: "🍎 Apple",
-  },
-  {
-    name: "Mohammad Ashraf Wani",
-    role: "Rice Farmer, Kokernag",
-    text: "The fertilizer recommendations from Mughal Grow Hub transformed my paddy yield. I went from 15 quintals to 22 quintals per kanal. Genuine products, honest advice.",
-    rating: 5,
-    crop: "🌾 Rice",
-  },
-  {
-    name: "Ghulam Nabi Sheikh",
-    role: "Vegetable Grower, Gadole",
-    text: "Best agriculture shop in the valley. They stock everything a farmer needs and the home delivery service saves me hours. My go-to for all seasonal requirements.",
-    rating: 5,
-    crop: "🥬 Vegetables",
-  },
-  {
-    name: "Fayaz Ahmad Bhat",
-    role: "Saffron Farmer, Pampore",
-    text: "Finding quality micronutrients for saffron was always a challenge. Mughal Grow Hub not only had them but guided me on the exact dosage for my soil type.",
-    rating: 5,
-    crop: "🌸 Saffron",
-  },
-];
+
 
 const stats = [
   { number: "500+", label: "Happy Farmers", icon: Users },
