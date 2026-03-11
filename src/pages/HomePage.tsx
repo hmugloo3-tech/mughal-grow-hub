@@ -133,21 +133,6 @@ export default function HomePage() {
             </div>
           </motion.div>
 
-          {/* Stats strip */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.7 }}
-            className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4"
-          >
-            {stats.map((stat) => (
-              <div key={stat.label} className="bg-background/10 backdrop-blur-sm border border-background/10 rounded-xl px-4 py-3 md:py-4 text-center">
-                <stat.icon className="h-5 w-5 text-secondary mx-auto mb-1.5" />
-                <p className="text-xl md:text-2xl font-bold text-background font-display">{stat.number}</p>
-                <p className="text-[11px] text-background/60 font-medium">{stat.label}</p>
-              </div>
-            ))}
-          </motion.div>
         </div>
       </section>
 
