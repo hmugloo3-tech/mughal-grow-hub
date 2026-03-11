@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Leaf, Award, ArrowRight, ShoppingCart, RefreshCw, Microscope, Bug, FlaskConical, CalendarDays, ScanLine, Users, Package, MapPin } from "lucide-react";
+import { ArrowRight, ShoppingCart, RefreshCw, Microscope, Bug, FlaskConical, CalendarDays, ScanLine } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,12 +33,6 @@ const fadeUp = {
 
 
 
-const stats = [
-  { number: "500+", label: "Happy Farmers", icon: Users },
-  { number: "200+", label: "Products", icon: Package },
-  { number: "15+", label: "Years Experience", icon: Award },
-  { number: "50km", label: "Delivery Range", icon: MapPin },
-];
 
 export default function HomePage() {
   const isMobile = useIsMobile();
@@ -139,21 +133,6 @@ export default function HomePage() {
             </div>
           </motion.div>
 
-          {/* Stats strip */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.7 }}
-            className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4"
-          >
-            {stats.map((stat) => (
-              <div key={stat.label} className="bg-background/10 backdrop-blur-sm border border-background/10 rounded-xl px-4 py-3 md:py-4 text-center">
-                <stat.icon className="h-5 w-5 text-secondary mx-auto mb-1.5" />
-                <p className="text-xl md:text-2xl font-bold text-background font-display">{stat.number}</p>
-                <p className="text-[11px] text-background/60 font-medium">{stat.label}</p>
-              </div>
-            ))}
-          </motion.div>
         </div>
       </section>
 
@@ -301,12 +280,6 @@ export default function HomePage() {
 
         <div className="container-custom relative z-10">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-center max-w-2xl mx-auto">
-            <motion.div initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ type: "spring", delay: 0.2 }}
-              className="inline-flex items-center gap-2 bg-secondary/20 border border-secondary/30 rounded-full px-5 py-2 mb-6"
-            >
-              <Leaf className="h-4 w-4 text-secondary" />
-              <span className="text-secondary text-sm font-semibold">Join 500+ Happy Farmers</span>
-            </motion.div>
 
             <h2 className="text-3xl md:text-5xl lg:text-6xl font-display font-bold text-primary-foreground mb-5 leading-[1.15]">
               Ready to Transform{" "}
