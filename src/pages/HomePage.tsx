@@ -436,33 +436,63 @@ export default function HomePage() {
       </section>
 
       {/* ===== CTA ===== */}
-      <section className="section-padding bg-muted/50" aria-label="Call to Action">
-        <div className="container-custom">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}
-            className="relative bg-primary rounded-3xl p-8 md:p-14 overflow-hidden text-center"
-          >
-            <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/10 rounded-full -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-secondary/10 rounded-full translate-y-1/2 -translate-x-1/2" />
-            <div className="relative z-10">
-              <h2 className="text-2xl md:text-4xl font-display font-bold text-primary-foreground mb-4">
-                Ready to Transform Your Yield?
-              </h2>
-              <p className="text-primary-foreground/70 max-w-lg mx-auto mb-8 leading-relaxed">
-                Join 500+ farmers who trust Mughal Grow Hub for premium agricultural products and expert guidance.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Link to="/products">
-                  <Button size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold px-8 gap-2 rounded-xl">
-                    Shop Now <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-                <a href="https://wa.me/916006561732?text=Hi! I need help choosing products for my farm." target="_blank" rel="noopener noreferrer">
-                  <Button size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground bg-primary-foreground/10 hover:bg-primary-foreground/20 font-semibold px-8 rounded-xl">
-                    WhatsApp Us
-                  </Button>
-                </a>
-              </div>
+      <section className="py-20 md:py-28 relative overflow-hidden" aria-label="Call to Action">
+        {/* Vivid gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-[hsl(158,45%,18%)] to-[hsl(160,30%,10%)]" />
+        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, hsl(28 75% 52% / 0.4) 0%, transparent 50%), radial-gradient(circle at 80% 30%, hsl(142 50% 36% / 0.3) 0%, transparent 50%), radial-gradient(circle at 60% 80%, hsl(28 75% 52% / 0.3) 0%, transparent 40%)' }} />
+        
+        {/* Animated decorative elements */}
+        <motion.div animate={{ y: [0, -15, 0], rotate: [0, 5, 0] }} transition={{ duration: 6, repeat: Infinity }} className="absolute top-10 right-[15%] w-20 h-20 rounded-full border-2 border-secondary/30" />
+        <motion.div animate={{ y: [0, 10, 0], rotate: [0, -3, 0] }} transition={{ duration: 5, repeat: Infinity, delay: 1 }} className="absolute bottom-16 left-[10%] w-14 h-14 rounded-2xl bg-secondary/15 rotate-12" />
+        <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 4, repeat: Infinity }} className="absolute top-1/2 left-[5%] w-3 h-3 rounded-full bg-secondary/40" />
+        <motion.div animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 3, repeat: Infinity, delay: 0.5 }} className="absolute top-[30%] right-[8%] w-2 h-2 rounded-full bg-leaf/40" />
+
+        <div className="container-custom relative z-10">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-center max-w-2xl mx-auto">
+            <motion.div initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ type: "spring", delay: 0.2 }}
+              className="inline-flex items-center gap-2 bg-secondary/20 border border-secondary/30 rounded-full px-5 py-2 mb-6"
+            >
+              <Leaf className="h-4 w-4 text-secondary" />
+              <span className="text-secondary text-sm font-semibold">Join 500+ Happy Farmers</span>
+            </motion.div>
+
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-display font-bold text-primary-foreground mb-5 leading-[1.15]">
+              Ready to Transform{" "}
+              <span className="relative inline-block">
+                <span className="relative z-10 text-secondary">Your Yield</span>
+                <motion.span initial={{ width: 0 }} whileInView={{ width: "100%" }} viewport={{ once: true }} transition={{ delay: 0.6, duration: 0.5 }}
+                  className="absolute bottom-1 left-0 h-3 bg-secondary/20 rounded-full -z-0"
+                />
+              </span>
+              ?
+            </h2>
+
+            <p className="text-lg md:text-xl text-primary-foreground/70 mb-10 leading-relaxed">
+              Premium products. Expert guidance. Doorstep delivery.<br className="hidden md:block" />
+              Everything your farm needs — in one place.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/products">
+                <Button size="lg" className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 font-bold text-base px-10 gap-2.5 h-14 rounded-2xl shadow-lg shadow-secondary/30 hover:shadow-xl hover:shadow-secondary/40 transition-all duration-300 hover:scale-105">
+                  <ShoppingCart className="h-5 w-5" /> Shop Now
+                </Button>
+              </Link>
+              <a href="https://wa.me/916006561732?text=Hi! I need help choosing products for my farm." target="_blank" rel="noopener noreferrer">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto border-2 border-primary-foreground/30 text-primary-foreground bg-primary-foreground/5 hover:bg-primary-foreground/15 font-bold text-base px-10 h-14 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105">
+                  💬 WhatsApp Us
+                </Button>
+              </a>
             </div>
+
+            {/* Trust indicators */}
+            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.8 }}
+              className="flex flex-wrap items-center justify-center gap-6 mt-10 text-primary-foreground/50"
+            >
+              {["🛡️ Genuine Products", "🚚 Free Delivery*", "📞 24/7 Support"].map((item) => (
+                <span key={item} className="text-xs md:text-sm font-medium">{item}</span>
+              ))}
+            </motion.div>
           </motion.div>
         </div>
       </section>
