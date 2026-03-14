@@ -39,7 +39,7 @@ export default function Footer() {
                 <p className="text-[10px] text-secondary uppercase tracking-[0.2em] font-semibold">Agriculture Solutions</p>
                 </div>
               </div>
-              <p className="text-sm text-background/60 leading-relaxed mb-6 max-w-xs">
+              <p className="text-sm text-white/60 leading-relaxed mb-6 max-w-xs">
                 Kashmir's most trusted agriculture partner since 2010. Premium pesticides, fertilizers, seeds & expert farming guidance.
               </p>
               {/* Social Icons */}
