@@ -120,10 +120,10 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-background/5">
-          <div className="container-custom py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-background/30">
+        <div className="border-t border-white/10">
+          <div className="container-custom py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-white/40">
             <span>© {currentYear} Mughal Grow Hub. All rights reserved.</span>
-            <div className="flex items-center gap-1 text-background/20">
+            <div className="flex items-center gap-1 text-white/30">
               <span>Crafted with</span>
               <Leaf className="h-3 w-3 text-secondary" />
               <span>for Kashmir's farmers</span>
