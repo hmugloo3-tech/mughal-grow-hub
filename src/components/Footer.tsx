@@ -27,19 +27,19 @@ export default function Footer() {
       </div>
 
       {/* Main footer */}
-      <div className="bg-black text-background">
+      <div className="bg-black text-white">
         <div className="container-custom py-14 md:py-20">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
             {/* Brand Column */}
             <div className="lg:col-span-4">
               <div className="flex items-center gap-3 mb-6">
-                <img src={logo} alt="Mughal Grow Hub" className="h-14 w-14 rounded-2xl object-contain bg-background/10 p-1.5 ring-2 ring-background/10" />
+                <img src={logo} alt="Mughal Grow Hub" className="h-14 w-14 rounded-2xl object-contain bg-white/10 p-1.5 ring-2 ring-white/10" />
                 <div>
-                  <h3 className="font-display font-bold text-xl text-background">Mughal Grow Hub</h3>
-                  <p className="text-[10px] text-secondary uppercase tracking-[0.2em] font-semibold">Agriculture Solutions</p>
+                <h3 className="font-display font-bold text-xl text-white">Mughal Grow Hub</h3>
+                <p className="text-[10px] text-secondary uppercase tracking-[0.2em] font-semibold">Agriculture Solutions</p>
                 </div>
               </div>
-              <p className="text-sm text-background/60 leading-relaxed mb-6 max-w-xs">
+              <p className="text-sm text-white/60 leading-relaxed mb-6 max-w-xs">
                 Kashmir's most trusted agriculture partner since 2010. Premium pesticides, fertilizers, seeds & expert farming guidance.
               </p>
               {/* Social Icons */}
@@ -50,7 +50,7 @@ export default function Footer() {
                   { icon: Youtube, href: "#", label: "YouTube" },
                 ].map((social) => (
                   <a key={social.label} href={social.href} aria-label={social.label}
-                    className="w-9 h-9 rounded-xl bg-background/5 border border-background/10 flex items-center justify-center hover:bg-secondary hover:border-secondary hover:text-secondary-foreground transition-all duration-300 text-background/50">
+                    className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-secondary hover:border-secondary hover:text-secondary-foreground transition-all duration-300 text-white/50">
                     <social.icon className="h-4 w-4" />
                   </a>
                 ))}
@@ -68,7 +68,7 @@ export default function Footer() {
                   { name: "About Us", path: "/about" },
                   { name: "Contact", path: "/contact" },
                 ].map((link) => (
-                  <Link key={link.path} to={link.path} className="text-sm text-background/50 hover:text-secondary hover:translate-x-1 transition-all duration-200 flex items-center gap-1.5 group">
+                  <Link key={link.path} to={link.path} className="text-sm text-white/60 hover:text-secondary hover:translate-x-1 transition-all duration-200 flex items-center gap-1.5 group">
                     <span className="h-px w-0 group-hover:w-3 bg-secondary transition-all duration-200" />
                     {link.name}
                   </Link>
@@ -81,7 +81,7 @@ export default function Footer() {
               <h4 className="font-display font-bold text-sm text-secondary uppercase tracking-wider mb-5">Categories</h4>
               <div className="grid grid-cols-2 gap-x-4 gap-y-3">
                 {["Fungicides", "Insecticides", "Fertilizers", "Micronutrients", "Seeds", "Farming Tools"].map((cat) => (
-                  <Link key={cat} to="/products" className="text-sm text-background/50 hover:text-secondary hover:translate-x-1 transition-all duration-200 flex items-center gap-1.5 group">
+                  <Link key={cat} to="/products" className="text-sm text-white/60 hover:text-secondary hover:translate-x-1 transition-all duration-200 flex items-center gap-1.5 group">
                     <span className="h-px w-0 group-hover:w-3 bg-secondary transition-all duration-200" />
                     {cat}
                   </Link>
@@ -94,21 +94,21 @@ export default function Footer() {
               <h4 className="font-display font-bold text-sm text-secondary uppercase tracking-wider mb-5">Get in Touch</h4>
               <div className="flex flex-col gap-4">
                 <a href="https://maps.google.com/?q=Gadool+Ahlan+Kokernag+Anantnag" target="_blank" rel="noopener noreferrer"
-                  className="flex items-start gap-3 text-sm text-background/50 hover:text-background/80 transition-colors group">
+                  className="flex items-start gap-3 text-sm text-white/60 hover:text-white/90 transition-colors group">
                   <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0 group-hover:bg-secondary/20 transition-colors">
                     <MapPin className="h-4 w-4 text-secondary" />
                   </div>
                   <span className="leading-relaxed">Gadool Ahlan, Kokernag,<br />Anantnag - 192202, J&K</span>
                 </a>
                 <a href="tel:+916006561732"
-                  className="flex items-center gap-3 text-sm text-background/50 hover:text-background/80 transition-colors group">
+                  className="flex items-center gap-3 text-sm text-white/60 hover:text-white/90 transition-colors group">
                   <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0 group-hover:bg-secondary/20 transition-colors">
                     <Phone className="h-4 w-4 text-secondary" />
                   </div>
                   <span>+91 6006561732</span>
                 </a>
                 <a href="mailto:hamidmugloo89@gmail.com"
-                  className="flex items-center gap-3 text-sm text-background/50 hover:text-background/80 transition-colors group">
+                  className="flex items-center gap-3 text-sm text-white/60 hover:text-white/90 transition-colors group">
                   <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0 group-hover:bg-secondary/20 transition-colors">
                     <Mail className="h-4 w-4 text-secondary" />
                   </div>
@@ -120,10 +120,10 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-background/5">
-          <div className="container-custom py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-background/30">
+        <div className="border-t border-white/10">
+          <div className="container-custom py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-white/40">
             <span>© {currentYear} Mughal Grow Hub. All rights reserved.</span>
-            <div className="flex items-center gap-1 text-background/20">
+            <div className="flex items-center gap-1 text-white/30">
               <span>Crafted with</span>
               <Leaf className="h-3 w-3 text-secondary" />
               <span>for Kashmir's farmers</span>
