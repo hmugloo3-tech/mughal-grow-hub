@@ -81,7 +81,7 @@ export default function Footer() {
               <h4 className="font-display font-bold text-sm text-secondary uppercase tracking-wider mb-5">Categories</h4>
               <div className="grid grid-cols-2 gap-x-4 gap-y-3">
                 {["Fungicides", "Insecticides", "Fertilizers", "Micronutrients", "Seeds", "Farming Tools"].map((cat) => (
-                  <Link key={cat} to="/products" className="text-sm text-background/50 hover:text-secondary hover:translate-x-1 transition-all duration-200 flex items-center gap-1.5 group">
+                  <Link key={cat} to="/products" className="text-sm text-white/60 hover:text-secondary hover:translate-x-1 transition-all duration-200 flex items-center gap-1.5 group">
                     <span className="h-px w-0 group-hover:w-3 bg-secondary transition-all duration-200" />
                     {cat}
                   </Link>
