@@ -27,7 +27,7 @@ export default function Footer() {
       </div>
 
       {/* Main footer */}
-      <div className="bg-foreground text-background">
+      <div className="bg-black text-background">
         <div className="container-custom py-14 md:py-20">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
             {/* Brand Column */}
