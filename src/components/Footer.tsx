@@ -33,7 +33,7 @@ export default function Footer() {
             {/* Brand Column */}
             <div className="lg:col-span-4">
               <div className="flex items-center gap-3 mb-6">
-                <img src={logo} alt="Mughal Grow Hub" className="h-14 w-14 rounded-2xl object-contain bg-background/10 p-1.5 ring-2 ring-background/10" />
+                <img src={logo} alt="Mughal Grow Hub" className="h-14 w-14 rounded-2xl object-contain bg-white/10 p-1.5 ring-2 ring-white/10" />
                 <div>
                 <h3 className="font-display font-bold text-xl text-white">Mughal Grow Hub</h3>
                 <p className="text-[10px] text-secondary uppercase tracking-[0.2em] font-semibold">Agriculture Solutions</p>
