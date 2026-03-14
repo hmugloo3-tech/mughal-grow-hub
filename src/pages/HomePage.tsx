@@ -281,7 +281,7 @@ export default function HomePage() {
         <div className="container-custom relative z-10">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-center max-w-2xl mx-auto">
 
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-display font-bold text-primary-foreground mb-5 leading-[1.15]">
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-display font-bold text-foreground mb-5 leading-[1.15]">
               Ready to Transform{" "}
               <span className="relative inline-block">
                 <span className="relative z-10 text-secondary">Your Yield</span>
