@@ -68,7 +68,7 @@ export default function Footer() {
                   { name: "About Us", path: "/about" },
                   { name: "Contact", path: "/contact" },
                 ].map((link) => (
-                  <Link key={link.path} to={link.path} className="text-sm text-background/50 hover:text-secondary hover:translate-x-1 transition-all duration-200 flex items-center gap-1.5 group">
+                  <Link key={link.path} to={link.path} className="text-sm text-white/60 hover:text-secondary hover:translate-x-1 transition-all duration-200 flex items-center gap-1.5 group">
                     <span className="h-px w-0 group-hover:w-3 bg-secondary transition-all duration-200" />
                     {link.name}
                   </Link>
