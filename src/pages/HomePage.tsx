@@ -267,21 +267,20 @@ export default function HomePage() {
       </section>
 
       {/* ===== CTA ===== */}
-      <section className="py-20 md:py-28 relative overflow-hidden" aria-label="Call to Action">
-        {/* Vivid gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary via-[hsl(158,45%,18%)] to-[hsl(160,30%,10%)]" />
-        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, hsl(28 75% 52% / 0.4) 0%, transparent 50%), radial-gradient(circle at 80% 30%, hsl(142 50% 36% / 0.3) 0%, transparent 50%), radial-gradient(circle at 60% 80%, hsl(28 75% 52% / 0.3) 0%, transparent 40%)' }} />
+      <section className="py-20 md:py-28 relative overflow-hidden bg-black" aria-label="Call to Action">
+        {/* Subtle radial glows */}
+        <div className="absolute inset-0 opacity-30" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, hsl(28 75% 52% / 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 30%, hsl(142 50% 36% / 0.2) 0%, transparent 50%)' }} />
         
         {/* Animated decorative elements */}
-        <motion.div animate={{ y: [0, -15, 0], rotate: [0, 5, 0] }} transition={{ duration: 6, repeat: Infinity }} className="absolute top-10 right-[15%] w-20 h-20 rounded-full border-2 border-secondary/30" />
-        <motion.div animate={{ y: [0, 10, 0], rotate: [0, -3, 0] }} transition={{ duration: 5, repeat: Infinity, delay: 1 }} className="absolute bottom-16 left-[10%] w-14 h-14 rounded-2xl bg-secondary/15 rotate-12" />
-        <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 4, repeat: Infinity }} className="absolute top-1/2 left-[5%] w-3 h-3 rounded-full bg-secondary/40" />
-        <motion.div animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 3, repeat: Infinity, delay: 0.5 }} className="absolute top-[30%] right-[8%] w-2 h-2 rounded-full bg-leaf/40" />
+        <motion.div animate={{ y: [0, -15, 0], rotate: [0, 5, 0] }} transition={{ duration: 6, repeat: Infinity }} className="absolute top-10 right-[15%] w-20 h-20 rounded-full border-2 border-secondary/20" />
+        <motion.div animate={{ y: [0, 10, 0], rotate: [0, -3, 0] }} transition={{ duration: 5, repeat: Infinity, delay: 1 }} className="absolute bottom-16 left-[10%] w-14 h-14 rounded-2xl bg-secondary/10 rotate-12" />
+        <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 4, repeat: Infinity }} className="absolute top-1/2 left-[5%] w-3 h-3 rounded-full bg-secondary/30" />
+        <motion.div animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 3, repeat: Infinity, delay: 0.5 }} className="absolute top-[30%] right-[8%] w-2 h-2 rounded-full bg-secondary/30" />
 
         <div className="container-custom relative z-10">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-center max-w-2xl mx-auto">
 
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-display font-bold text-foreground mb-5 leading-[1.15]">
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-5 leading-[1.15]">
               Ready to Transform{" "}
               <span className="relative inline-block">
                 <span className="relative z-10 text-secondary">Your Yield</span>
@@ -292,7 +291,7 @@ export default function HomePage() {
               ?
             </h2>
 
-            <p className="text-lg md:text-xl text-primary-foreground/70 mb-10 leading-relaxed">
+            <p className="text-lg md:text-xl text-white/60 mb-10 leading-relaxed">
               Premium products. Expert guidance. Doorstep delivery.<br className="hidden md:block" />
               Everything your farm needs — in one place.
             </p>
@@ -304,7 +303,7 @@ export default function HomePage() {
                 </Button>
               </Link>
               <a href="https://wa.me/916006561732?text=Hi! I need help choosing products for my farm." target="_blank" rel="noopener noreferrer">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto border-2 border-primary-foreground/30 text-primary-foreground bg-primary-foreground/5 hover:bg-primary-foreground/15 font-bold text-base px-10 h-14 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto border-2 border-white/20 text-white bg-white/5 hover:bg-white/10 font-bold text-base px-10 h-14 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105">
                   💬 WhatsApp Us
                 </Button>
               </a>
@@ -312,7 +311,7 @@ export default function HomePage() {
 
             {/* Trust indicators */}
             <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.8 }}
-              className="flex flex-wrap items-center justify-center gap-6 mt-10 text-primary-foreground/50"
+              className="flex flex-wrap items-center justify-center gap-6 mt-10 text-white/40"
             >
               {["🛡️ Genuine Products", "🚚 Free Delivery*", "📞 24/7 Support"].map((item) => (
                 <span key={item} className="text-xs md:text-sm font-medium">{item}</span>
