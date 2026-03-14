@@ -50,7 +50,7 @@ export default function Footer() {
                   { icon: Youtube, href: "#", label: "YouTube" },
                 ].map((social) => (
                   <a key={social.label} href={social.href} aria-label={social.label}
-                    className="w-9 h-9 rounded-xl bg-background/5 border border-background/10 flex items-center justify-center hover:bg-secondary hover:border-secondary hover:text-secondary-foreground transition-all duration-300 text-background/50">
+                    className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-secondary hover:border-secondary hover:text-secondary-foreground transition-all duration-300 text-white/50">
                     <social.icon className="h-4 w-4" />
                   </a>
                 ))}
