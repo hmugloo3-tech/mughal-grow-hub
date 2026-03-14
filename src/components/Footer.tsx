@@ -101,7 +101,7 @@ export default function Footer() {
                   <span className="leading-relaxed">Gadool Ahlan, Kokernag,<br />Anantnag - 192202, J&K</span>
                 </a>
                 <a href="tel:+916006561732"
-                  className="flex items-center gap-3 text-sm text-background/50 hover:text-background/80 transition-colors group">
+                  className="flex items-center gap-3 text-sm text-white/60 hover:text-white/90 transition-colors group">
                   <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0 group-hover:bg-secondary/20 transition-colors">
                     <Phone className="h-4 w-4 text-secondary" />
                   </div>
