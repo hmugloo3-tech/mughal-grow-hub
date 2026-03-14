@@ -35,8 +35,8 @@ export default function Footer() {
               <div className="flex items-center gap-3 mb-6">
                 <img src={logo} alt="Mughal Grow Hub" className="h-14 w-14 rounded-2xl object-contain bg-background/10 p-1.5 ring-2 ring-background/10" />
                 <div>
-                  <h3 className="font-display font-bold text-xl text-background">Mughal Grow Hub</h3>
-                  <p className="text-[10px] text-secondary uppercase tracking-[0.2em] font-semibold">Agriculture Solutions</p>
+                <h3 className="font-display font-bold text-xl text-white">Mughal Grow Hub</h3>
+                <p className="text-[10px] text-secondary uppercase tracking-[0.2em] font-semibold">Agriculture Solutions</p>
                 </div>
               </div>
               <p className="text-sm text-background/60 leading-relaxed mb-6 max-w-xs">
