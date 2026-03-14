@@ -94,7 +94,7 @@ export default function Footer() {
               <h4 className="font-display font-bold text-sm text-secondary uppercase tracking-wider mb-5">Get in Touch</h4>
               <div className="flex flex-col gap-4">
                 <a href="https://maps.google.com/?q=Gadool+Ahlan+Kokernag+Anantnag" target="_blank" rel="noopener noreferrer"
-                  className="flex items-start gap-3 text-sm text-background/50 hover:text-background/80 transition-colors group">
+                  className="flex items-start gap-3 text-sm text-white/60 hover:text-white/90 transition-colors group">
                   <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0 group-hover:bg-secondary/20 transition-colors">
                     <MapPin className="h-4 w-4 text-secondary" />
                   </div>
